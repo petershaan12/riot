@@ -22,10 +22,10 @@ const NavItems = ({ session }: any) => {
           <li
             key={link.route}
             className={`${
-              isActive && "text-primary-500"
-            }  flex-center p-medium-4 whitespace-nowrap`}
+              isActive ? "text-primary-500 opacity-100" : "opacity-50"
+            } flex-center p-medium-4 whitespace-nowrap hover:text-primary-500`}
           >
-            <Link href={link.route} className="text-sm">
+            <Link href={link.route} className="text-sm ">
               {link.label}
             </Link>
           </li>

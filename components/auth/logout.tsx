@@ -24,13 +24,9 @@ const Logout = () => {
   };
   return (
     <>
-      <Button
-        asChild
-        onClick={handleLogout}
-        className="rounded-full bg-white/10 backdrop-blur-xl text-sm px-7 hover:cursor-pointer"
-      >
+      <div onClick={handleLogout} className="hover:cursor-pointer">
         <p>Logout</p>
-      </Button>
+      </div>
     </>
   );
 };

@@ -1,4 +1,4 @@
-const EventsPage = () => {
+const Page = () => {
   return (
     <>
       <section className="bg-contain p-5 md:py-10">
@@ -10,4 +10,4 @@ const EventsPage = () => {
   );
 };
 
-export default EventsPage;
+export default Page;

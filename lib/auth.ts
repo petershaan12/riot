@@ -4,15 +4,20 @@ import CredentialProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { connectToDatabase } from "./database";
 import { User } from "./database/models/userModel";
+import { getUserByEmail } from "./utils";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  secret: process.env.AUTH_SECRET,
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
     }),
     CredentialProvider({
-      name: "Credentials",
+      name: "credentials",
       credentials: {
         email: {
           label: "Email",
@@ -38,27 +43,45 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const user = await User.findOne({ email }).select("+password");
 
-        if (!user) throw new Error("Email Belum Terdaftar");
+        if (!user) throw new Error("Email Aja Belum Terdaftar");
 
         const isMatch = await compare(password, user.password);
 
         if (!isMatch) throw new Error("Password Salah");
 
-        const userData = {
-          name: user.name,
-          email: user.email,
-          id: user._id,
-        };
-
-        return userData;
+        return user;
       },
     }),
   ],
-  secret: process.env.AUTH_SECRET,
+
+  debug: true,
   pages: {
     signIn: "/login",
   },
+
   callbacks: {
+    jwt: async ({ token }) => {
+      // console.log("User in authorize:", user);
+      if (!token.sub) return token;
+      console.log(token.email);
+      const existingUser = await getUserByEmail(token.email as string);
+
+      if (!existingUser) {
+        console.error("User not found for email:", token.email);
+        return token; // Return the token as is if no user is found
+      }
+
+      token.createdAt = existingUser.createdAt;
+      return token;
+    },
+    session: async ({ token, session }) => {
+      if (token.sub && session.user) {
+        session.user.id = token.sub;
+      }
+
+      return session;
+    },
+
     signIn: async ({ user, account }) => {
       if (account?.provider === "credentials") {
         return true;

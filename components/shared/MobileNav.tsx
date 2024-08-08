@@ -8,25 +8,40 @@ import {
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import Image from "next/image";
-import { Separator } from "../ui/separator";
 import NavItems from "./NavItems";
+import { auth } from "@/lib/auth";
+import { getCurrentTime } from "@/lib/utils";
+import { Button } from "../ui/button";
+import Link from "next/link";
+import Logout from "../auth/logout";
 
-const MobileNav = () => {
+const MobileNav = ({ session }: any) => {
   return (
     <nav className="md:hidden">
       <Sheet>
-        <SheetTrigger className="align-middle">
+        <SheetTrigger className="align-middle border border-white/10 rounded-lg p-2">
           <Menu />
         </SheetTrigger>
-        <SheetContent className="flex flex-col gap-6 bg-white md:hidden">
+        <SheetContent className="flex flex-col bg-black gap-10 md:hidden border-l-primary/50 ">
           <Image
             src="/assets/images/logo.svg"
-            width={128}
-            height={28}
+            width={80}
+            height={10}
             alt="riot Logo"
           />
-          <Separator className="border border-gray-50" />
           <NavItems />
+          {!session?.user ? (
+            <Button
+              asChild
+              className="rounded-full bg-white/10 backdrop-blur-xl"
+            >
+              <Link href="/auth/login" className="text-sm px-7">
+                Join Now
+              </Link>
+            </Button>
+          ) : (
+            <Logout />
+          )}
         </SheetContent>
       </Sheet>
     </nav>
