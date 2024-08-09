@@ -15,7 +15,11 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import Logout from "../auth/logout";
 
-const MobileNav = ({ session }: any) => {
+interface MobileNavProps {
+  isLogin: boolean;
+}
+
+const MobileNav: React.FC<MobileNavProps> = ({ isLogin }) => {
   return (
     <nav className="md:hidden">
       <Sheet>
@@ -29,8 +33,8 @@ const MobileNav = ({ session }: any) => {
             height={10}
             alt="riot Logo"
           />
-          <NavItems />
-          {!session?.user ? (
+          <NavItems isLogin={isLogin} />
+          {!isLogin ? (
             <Button
               asChild
               className="rounded-full bg-white/10 backdrop-blur-xl"

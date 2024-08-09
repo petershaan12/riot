@@ -10,7 +10,7 @@ export default function RootLayout({
     <div className="flex h-screen flex-col ">
       <div className="css-gradient bg-custom-gradient"></div>
       <Header />
-      <main className="flex-1 z-10">{children}</main>
+      <main className="flex-1 z-10 mx-auto">{children}</main>
       <Footer />
     </div>
   );

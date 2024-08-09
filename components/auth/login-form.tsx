@@ -17,7 +17,7 @@ import { Button } from "../ui/button";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
 import { useRouter } from "next/navigation";
-import { credentialsLogin } from "@/app/actions/auth";
+import { login } from "@/app/actions/auth";
 import { toast } from "sonner";
 
 export const LoginForm = () => {
@@ -38,14 +38,9 @@ export const LoginForm = () => {
     setSuccess("");
 
     const { email, password } = values;
-
-    if (!email || !password) {
-      return toast.error("Please provide all fields");
-    }
-
     const toastId = toast.loading("Logging in");
 
-    const error = await credentialsLogin(email, password);
+    const error = await login(email, password);
     if (!error) {
       toast.success("Login Success", {
         id: toastId,

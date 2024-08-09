@@ -1,12 +1,13 @@
-import NextAuth, { AuthError } from "next-auth";
+import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialProvider from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
-import { connectToDatabase } from "./database";
-import { User } from "./database/models/userModel";
-import { getUserByEmail } from "./utils";
+import { db } from "./db";
+import { getUserById } from "@/app/actions/auth";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  adapter: PrismaAdapter(db),
   secret: process.env.AUTH_SECRET,
   session: {
     strategy: "jwt",
@@ -32,20 +33,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const email = credentials.email as string;
         const password = credentials.password as string;
 
-        console.log(email, password);
+        if (!email || !password) throw new Error("Please provide all field");
 
-        if (!email || !password) {
-          return Error("Please Provide Email and Password");
-        }
+        let user: any = await db.user.findFirst({ where: { email } });
+        if (!user) throw new Error("User not found");
 
-        //Connect With Database
-        await connectToDatabase();
-
-        const user = await User.findOne({ email }).select("+password");
-
-        if (!user) throw new Error("Email Aja Belum Terdaftar");
-
-        const isMatch = await compare(password, user.password);
+        const isMatch = await compare(password, user.hashedPassword);
 
         if (!isMatch) throw new Error("Password Salah");
 
@@ -61,16 +54,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   callbacks: {
     jwt: async ({ token }) => {
-      // console.log("User in authorize:", user);
       if (!token.sub) return token;
-      console.log(token.email);
-      const existingUser = await getUserByEmail(token.email as string);
+      // console.log(token.sub);
+      const existingUser = await getUserById(token.sub);
 
       if (!existingUser) {
-        console.error("User not found for email:", token.email);
+        // console.log("User not found for id:", token.sub);
         return token; // Return the token as is if no user is found
       }
-
+      // console.log(existingUser)
+      token.role = existingUser.role;
       token.createdAt = existingUser.createdAt;
       return token;
     },
@@ -79,39 +72,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.sub;
       }
 
+      if (token.createdAt && session.user) {
+        session.user.createdAt = token.createdAt;
+        session.user.role = token.role;
+      }
+
       return session;
-    },
-
-    signIn: async ({ user, account }) => {
-      if (account?.provider === "credentials") {
-        return true;
-      }
-      if (account?.provider === "google") {
-        try {
-          const { id, name, email, image } = user;
-          await connectToDatabase();
-
-          const alreadyUser = await User.findOne({ email });
-
-          console.log("alreadyUser", !alreadyUser);
-
-          if (!alreadyUser) {
-            try {
-              await User.create({ email, name, image, googleId: id });
-            } catch (error) {
-              console.error("Error saat create user:", error);
-              throw new AuthError("Gagal membuat pengguna");
-            }
-          }
-
-          console.log("berhasil create user");
-
-          return true;
-        } catch (error) {
-          throw new AuthError("Gagal Login");
-        }
-      }
-      return false;
     },
   },
 });

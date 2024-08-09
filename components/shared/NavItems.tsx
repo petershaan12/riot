@@ -1,16 +1,22 @@
 "use client";
+
 import { headerLinks } from "@/constants";
-import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const NavItems = ({ session }: any) => {
+interface NavItemsProps {
+  isLogin: boolean;
+}
+
+const NavItems: React.FC<NavItemsProps> = ({ isLogin }) => {
   const pathname = usePathname();
+
+  console.log("isLogin prop:", isLogin);
 
   const filteredNavItems = headerLinks.filter((item) => {
     if (item.protected) {
-      return session?.user;
+      return isLogin;
     }
     return true;
   });

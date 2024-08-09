@@ -1,13 +1,17 @@
 "use server";
 
 import { signIn, signOut } from "@/lib/auth";
-import { connectToDatabase } from "@/lib/database";
-import { User } from "@/lib/database/models/userModel";
-import { hash } from "bcryptjs";
+import { db } from "@/lib/db";
+import { saltAndHashPassword } from "@/lib/utils";
 import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 
-const credentialsLogin = async (email: string, password: string) => {    
+const login = async (email: string, password: string) => {
+  const existingUser = await getUserByEmail(email as string);
+  if (!existingUser) {
+    return "User not found, Please register";
+  }
+
   try {
     await signIn("credentials", {
       redirect: false,
@@ -15,7 +19,7 @@ const credentialsLogin = async (email: string, password: string) => {
       email,
       password,
     });
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof AuthError) {
       if (error.cause?.err instanceof Error) {
         return error.cause.err.message; // return "custom error"
@@ -28,8 +32,6 @@ const credentialsLogin = async (email: string, password: string) => {
       }
     }
     throw error;
-    // const someError = error as CredentialsSignin;
-    // return someError.cause;
   }
 };
 
@@ -42,18 +44,17 @@ const register = async (formData: FormData) => {
     throw new Error("Please provide all field");
   }
 
-  await connectToDatabase();
+  const user = await getUserByEmail(email);
+  if (user) throw new Error("User already exists");
 
-  const user = await User.findOne({ email });
+  const hashedPassword = await saltAndHashPassword(password);
 
-  if (user) throw new Error("User already Exists");
-
-  const hashedPassword = await hash(password, 10);
-
-  User.create({
-    name,
-    email,
-    password: hashedPassword,
+  await db.user.create({
+    data: {
+      name,
+      email,
+      hashedPassword,
+    },
   });
 };
 
@@ -62,4 +63,27 @@ const logout = async () => {
   revalidatePath("/");
 };
 
-export { credentialsLogin, register, logout };
+const getUserByEmail = async (email: string) => {
+  try {
+    const user = await db.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    return user;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+const getUserById = async (id: string) => {
+  try {
+    const user = await db.user.findUnique({ where: { id } });
+    return user;
+  } catch {
+    return null;
+  }
+};
+
+export { login, register, logout, getUserByEmail, getUserById };

@@ -1,9 +1,9 @@
 "use client";
 
 import { logout } from "@/app/actions/auth";
-import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 
 const Logout = () => {
   const router = useRouter();
@@ -24,7 +24,8 @@ const Logout = () => {
   };
   return (
     <>
-      <div onClick={handleLogout} className="hover:cursor-pointer">
+      <div onClick={handleLogout} className="hover:cursor-pointer flex">
+        <LogOut className="w-4 mr-2" />
         <p>Logout</p>
       </div>
     </>

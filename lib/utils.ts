@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { User } from "./database/models/userModel";
+import bcrypt from "bcryptjs";
+import { auth } from "./auth";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -15,14 +16,15 @@ export function getCurrentTime(): string {
   });
 }
 
-export async function getUserByEmail(email: string) {
-  try {
-    console.log("mencari ini", email);
-    const user = await User.findOne({ email: email });
-    console.log("ini user", user);
-    return user;
-  } catch {
-    console.log("ga nemu");
-    return null;
-  }
+export function saltAndHashPassword(password: any) {
+  const saltRounds = 10;
+  const salt = bcrypt.genSaltSync(saltRounds);
+  const hash = bcrypt.hashSync(password, salt);
+  return hash;
+}
+
+
+export const currentUser = async () => {
+  const session = await auth()
+  return session?.user
 }

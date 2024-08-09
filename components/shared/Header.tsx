@@ -34,7 +34,7 @@ const Header = async () => {
           </Link>
 
           <nav className="hidden md:block">
-            <NavItems session={session} />
+            <NavItems isLogin={!!session} />
           </nav>
         </div>
 
@@ -66,7 +66,7 @@ const Header = async () => {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
-          <MobileNav session={session} />
+          <MobileNav isLogin={!!session} />
         </div>
       </div>
 

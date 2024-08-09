@@ -1,11 +1,6 @@
-import { auth } from "@/lib/auth";
-import { decode } from "next-auth/jwt";
-import { cookies } from "next/headers";
 import Image from "next/image";
 
-export default async function Home() {
-  const session = await auth();
-
+export default function Home() {
   return (
     <>
       <section className="bg-contain p-5 md:py-10">
@@ -20,7 +15,7 @@ export default async function Home() {
             width={1091}
             height={491}
             alt="riot_banner"
-            className=""  
+            className=""
           />
         </div>
       </section>
