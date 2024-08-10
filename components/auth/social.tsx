@@ -1,22 +1,26 @@
+"use client";
 import { FcGoogle } from "react-icons/fc";
 import { Button } from "../ui/button";
 import { FaGithub } from "react-icons/fa";
-import { signIn } from "@/lib/auth";
+import { signIn } from "next-auth/react";
+import { DEFAULT_LOGIN_REDIRECT } from "@/route";
 
 export const Social = () => {
+  const onClick = (provider: "google" | "github") => {
+    signIn(provider, {
+      callbackUrl: DEFAULT_LOGIN_REDIRECT,
+    });
+  };
   return (
     <div className="flex items-center w-full gap-x-2">
-      <form
-        action={async () => {
-          "use server";
-          await signIn("google");
-        }}
-        className="w-full"
+      <Button
+        onClick={() => onClick("google")}
+        type="submit"
+        size="lg"
+        className="w-full bg-white rounded-lg"
       >
-        <Button type="submit" size="lg" className="w-full bg-white rounded-lg">
-          <FcGoogle className="w-5 h-5" />
-        </Button>
-      </form>
+        <FcGoogle className="w-5 h-5" />
+      </Button>
     </div>
   );
 };

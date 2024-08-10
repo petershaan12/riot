@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/lib/auth";
+import { Suspense } from "react";
+import Loading from "./(root)/loading";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -27,7 +29,7 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <body className={cn("bg-[#131517] text-white", poppins.className)}>
-          {children}
+          <Suspense fallback={<Loading />}>{children}</Suspense>
           <Toaster />
         </body>
       </html>

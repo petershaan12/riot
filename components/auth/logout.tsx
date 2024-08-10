@@ -24,7 +24,7 @@ const Logout = () => {
   };
   return (
     <>
-      <div onClick={handleLogout} className="hover:cursor-pointer flex">
+      <div onClick={handleLogout} className="flex items-center">
         <LogOut className="w-4 mr-2" />
         <p>Logout</p>
       </div>

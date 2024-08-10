@@ -1,5 +1,6 @@
 import Header from "@/components/shared/Header";
 import { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { FaHome } from "react-icons/fa";
 
@@ -13,8 +14,9 @@ const NotFound = () => {
     <div className="flex h-screen flex-col ">
       <div className="css-gradient bg-custom-gradient"></div>
       <Header />
-      <section className="bg-contain md:py-20 flex justify-center ">
-        <div className="flex flex-col items-center justify-center text-center gap-5">
+      <section className="bg-contain md:py-10 flex justify-center ">
+        <div className="flex flex-col items-center justify-center text-center">
+          <Image src="/animation/404.gif" width={100} height={20} />
           <h1 className="text-[130px] text-white font-monument-regular ">
             404
           </h1>

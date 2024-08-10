@@ -1,34 +1,35 @@
 "use server";
-
 import { signIn, signOut } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { saltAndHashPassword } from "@/lib/utils";
+import { DEFAULT_LOGIN_REDIRECT } from "@/route";
 import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 
 const login = async (email: string, password: string) => {
   const existingUser = await getUserByEmail(email as string);
   if (!existingUser) {
-    return "User not found, Please register";
+    return { error: "User not found, Please register" };
   }
 
   try {
     await signIn("credentials", {
       redirect: false,
-      callbackUrl: "/",
+      callbackUrl: DEFAULT_LOGIN_REDIRECT,
       email,
       password,
     });
+    return { success: "Login success" };
   } catch (error: any) {
     if (error instanceof AuthError) {
       if (error.cause?.err instanceof Error) {
-        return error.cause.err.message; // return "custom error"
+        return { error: error.cause.err.message }; // return "custom error"
       }
       switch (error.type) {
         case "CredentialsSignin":
-          return "Invalid credentials";
+          return { error: "Invalid credentials" };
         default:
-          return "Something went wrong";
+          return { error: "Something went wrong" };
       }
     }
     throw error;
@@ -39,13 +40,16 @@ const register = async (formData: FormData) => {
   const name = formData.get("name") as string | undefined;
   const email = formData.get("email") as string | undefined;
   const password = formData.get("password") as string | undefined;
+  const username = await generateUsername(name as string);
 
   if (!email || !password || !name) {
-    throw new Error("Please provide all field");
+    return { error: "Please provide all fields" };
   }
 
   const user = await getUserByEmail(email);
-  if (user) throw new Error("User already exists");
+  if (user) {
+    return { error: "User already exist" };
+  }
 
   const hashedPassword = await saltAndHashPassword(password);
 
@@ -53,9 +57,11 @@ const register = async (formData: FormData) => {
     data: {
       name,
       email,
-      hashedPassword,
+      password: hashedPassword,
+      username,
     },
   });
+  return { success: "Register success" };
 };
 
 const logout = async () => {
@@ -86,4 +92,31 @@ const getUserById = async (id: string) => {
   }
 };
 
-export { login, register, logout, getUserByEmail, getUserById };
+const getAccountByUserId = async (id: string) => {
+  try {
+    const account = await db.account.findFirst({ where: { userId: id } });
+    return account;
+  } catch {
+    return null;
+  }
+};
+
+const generateUsername = async (name: string) => {
+  const username = name.toLowerCase().replace(/\s/g, "-");
+  const existingUser = await db.user.findFirst({ where: { username } });
+
+  if (!existingUser) {
+    return username;
+  }
+
+  return `${username}-${Math.floor(Math.random() * 1000)}`;
+};
+
+export {
+  login,
+  register,
+  logout,
+  getUserByEmail,
+  getUserById,
+  getAccountByUserId,
+};

@@ -46,16 +46,25 @@ export const RegisterForm = () => {
 
     const toastId = toast.loading("Registering...");
 
-    try {
-      await register(formData);
-      toast.success("Register Success Please Login", {
-        id: toastId,
-      });
-      router.push("/auth/login");
-    } catch (error: any) {
-      setError(error.message);
-      toast.dismiss(toastId);
-    }
+    startTransition(() => {
+      register(formData)
+        .then((data) => {
+          if (data.error) {
+            setError(data.error);
+            toast.dismiss(toastId);
+          }
+          if (data.success) {
+            toast.success(data.success, {
+              id: toastId,
+            });
+            router.push("/auth/login");
+          }
+        })
+        .catch((error) => {
+          setError(error.message);
+          toast.dismiss(toastId);
+        });
+    });
   };
 
   return (

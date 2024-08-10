@@ -1,5 +1,7 @@
 import Footer from "@/components/shared/Footer";
 import Header from "@/components/shared/Header";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 export default function RootLayout({
   children,
@@ -10,7 +12,9 @@ export default function RootLayout({
     <div className="flex h-screen flex-col ">
       <div className="css-gradient bg-custom-gradient"></div>
       <Header />
-      <main className="flex-1 z-10 mx-auto">{children}</main>
+      <Suspense fallback={<Loading />} >
+        <main className="flex-1 z-10 mx-auto">{children}</main>
+      </Suspense>
       <Footer />
     </div>
   );

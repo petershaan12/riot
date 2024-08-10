@@ -16,11 +16,17 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { login } from "@/app/actions/auth";
 import { toast } from "sonner";
 
 export const LoginForm = () => {
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email already linked with another account"
+      : "";
+
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -40,16 +46,26 @@ export const LoginForm = () => {
     const { email, password } = values;
     const toastId = toast.loading("Logging in");
 
-    const error = await login(email, password);
-    if (!error) {
-      toast.success("Login Success", {
-        id: toastId,
-      });
-      router.refresh();
-    } else {
-      setError(error);
-      toast.dismiss(toastId);
-    }
+    startTransition(() => {
+      login(email, password)
+        .then((data) => {
+          if (data.error) {
+            setError(data.error);
+            toast.dismiss(toastId);
+          }
+
+          if (data.success) {
+            toast.success(data.success, {
+              id: toastId,
+            });
+            router.refresh();
+          }
+        })
+        .catch((error) => {
+          setError(error.message);
+          toast.dismiss(toastId);
+        });
+    });
   };
 
   return (
@@ -93,7 +109,7 @@ export const LoginForm = () => {
             )}
           />
         </div>
-        <FormError message={error} />
+        <FormError message={error || urlError} />
         <FormSuccess message={success} />
         <Button
           type="submit"

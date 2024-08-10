@@ -14,7 +14,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
-import { BellIcon, SearchIcon } from "lucide-react";
+import { BellIcon, SearchIcon, Settings } from "lucide-react";
 
 const Header = async () => {
   const session = await auth();
@@ -39,7 +39,7 @@ const Header = async () => {
         </div>
 
         <div className="flex  gap-3 items-center">
-          <p className="opacity-50">{currentTime}</p>
+          <p className="opacity-50 sm:text-base text-sm">{currentTime}</p>
           <SearchIcon className="w-4 opacity-50" strokeWidth={3} />
           <BellIcon className="w-4 opacity-50" strokeWidth={3} />
           {!session?.user ? (
@@ -56,11 +56,24 @@ const Header = async () => {
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer">
                   <AvatarImage src={session?.user?.image || ""} />
-                  <AvatarFallback>PS</AvatarFallback>
+                  <AvatarFallback>
+                    <p className="font-bold uppercase">
+                      {session?.user?.name?.substring(0, 2)}
+                    </p>
+                  </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem className="hover:cursor-pointer ">
+                  <Link
+                    href="/profile/ubahProfile"
+                    className="flex items-center"
+                  >
+                    <Settings className="w-4 mr-2" />
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="hover:cursor-pointer ">
                   <Logout />
                 </DropdownMenuItem>
               </DropdownMenuContent>

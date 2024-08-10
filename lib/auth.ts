@@ -4,7 +4,7 @@ import CredentialProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { db } from "./db";
-import { getUserById } from "@/app/actions/auth";
+import { getAccountByUserId, getUserById } from "@/app/actions/auth";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(db),
@@ -38,7 +38,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         let user: any = await db.user.findFirst({ where: { email } });
         if (!user) throw new Error("User not found");
 
-        const isMatch = await compare(password, user.hashedPassword);
+        const isMatch = await compare(password, user.password);
 
         if (!isMatch) throw new Error("Password Salah");
 
@@ -49,7 +49,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   debug: true,
   pages: {
-    signIn: "/login",
+    signIn: "/auth/login",
+    error: "/auth/error",
+  },
+  events: {
+    async linkAccount({ user }) {
+      await db.user.update({
+        where: { id: user.id },
+        data: { emailVerified: new Date() },
+      });
+    },
   },
 
   callbacks: {
@@ -62,9 +71,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // console.log("User not found for id:", token.sub);
         return token; // Return the token as is if no user is found
       }
-      // console.log(existingUser)
+
+      const existingAccount = await getAccountByUserId(existingUser.id);
+      token.isOAuth = !!existingAccount;
       token.role = existingUser.role;
+      token.bio = existingUser.bio;
       token.createdAt = existingUser.createdAt;
+      token.username = existingUser.username;
+      token.image = existingUser.image;
+
       return token;
     },
     session: async ({ token, session }) => {
@@ -72,9 +87,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.sub;
       }
 
-      if (token.createdAt && session.user) {
+      if (session.user) {
         session.user.createdAt = token.createdAt;
         session.user.role = token.role;
+        session.user.bio = token.bio;
+        session.user.username = token.username;
+        session.user.image = token.image;
+        session.user.isOAuth = token.isOAuth as boolean;
       }
 
       return session;
