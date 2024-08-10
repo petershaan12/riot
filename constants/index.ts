@@ -38,3 +38,14 @@ export const eventDefaultValues = {
   isFree: false,
   url: "",
 };
+
+export const profilDefaultValues = {
+  name: undefined,
+  image: undefined,
+  username: undefined,
+  email: undefined,
+  bio: undefined,
+  password: undefined,
+  newPassword: undefined,
+};
+

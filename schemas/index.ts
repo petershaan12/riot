@@ -1,4 +1,5 @@
-import * as z from "zod"
+import { start } from "repl";
+import * as z from "zod";
 
 export const SettingSchema = z
   .object({
@@ -6,7 +7,11 @@ export const SettingSchema = z
     username: z.string().optional(),
     image: z.string().url().optional(),
     email: z.string().email().optional(),
-    bio: z.string().optional(),
+    bio: z
+      .string()
+      .min(3, "Title must be at least 3 characters long")
+      .max(150, "Title must be at most 150 characters long")
+      .optional(),
     password: z.string().min(6).optional(),
     newPassword: z.string().min(6).optional(),
   })
@@ -29,23 +34,41 @@ export const SettingSchema = z
   );
 
 export const LoginSchema = z.object({
-    email: z.string().email({
-        message: "Email is required"
-    }),
-    password: z.string().min(1, {
-        message: "Password is required"
-    })
-})
+  email: z.string().email({
+    message: "Email is required",
+  }),
+  password: z.string().min(1, {
+    message: "Password is required",
+  }),
+});
 
 export const RegisterSchema = z.object({
-    email: z.string().email({
-        message: "Email is required"
-    }),
-    password: z.string().min(6, {
-        message: "Minimum 6 Characters required"
-    }),
-    name: z.string().min(1, {
-        message: "Name is required"
-    })
-})
+  email: z.string().email({
+    message: "Email is required",
+  }),
+  password: z.string().min(6, {
+    message: "Minimum 6 Characters required",
+  }),
+  name: z.string().min(1, {
+    message: "Name is required",
+  }),
+});
 
+export const eventsFormSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters long"),
+  description: z
+    .string()
+    .min(3, "Description must be at least 3 characters long")
+    .max(400, "Description must be at most 400 characters long"),
+  location: z
+    .string()
+    .min(3, "Location must be at least 3 characters long")
+    .max(400, "Location must be at most 400 characters long"),
+  imageUrl: z.string(),
+  startDateTime: z.date(),
+  endDateTime: z.date(),
+  categoryId: z.string(),
+  isFree: z.boolean(),
+  price: z.string(),
+  url: z.string().url(),
+});
