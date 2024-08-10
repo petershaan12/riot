@@ -11,8 +11,7 @@ interface NavItemsProps {
 
 const NavItems: React.FC<NavItemsProps> = ({ isLogin }) => {
   const pathname = usePathname();
-
-  console.log("isLogin prop:", isLogin);
+  // console.log("isLogin prop:", isLogin);
 
   const filteredNavItems = headerLinks.filter((item) => {
     if (item.protected) {
