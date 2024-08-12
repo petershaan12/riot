@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { startTransition } from "react";
 import { useState, useEffect } from "react";
 import {
   Select,
@@ -20,8 +20,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { getCategories } from "@/app/actions/settings";
+import { createCategory, getCategories } from "@/app/actions/settings";
 import { PlusIcon } from "lucide-react";
+import { Input } from "../ui/input";
+import { toast } from "sonner";
 
 interface ICategory {
   _id: string;
@@ -37,7 +39,27 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [newCategory, setNewCategory] = useState("");
 
-  const handleAddCategory = () => {};
+  const handleAddCategory = async () => {
+    const toastId = toast.loading("Add Category...");
+    if (newCategory.trim()) {
+      try {
+        const addedCategory = await createCategory(newCategory);
+        setCategories((prevCategories) => [
+          ...prevCategories,
+          { _id: addedCategory.id, name: addedCategory.name },
+        ]);
+        setNewCategory("");
+        toast.success("Category added", {
+          id: toastId,
+        });
+      } catch (error) {
+        console.error("Error adding category:", error);
+        toast.error("Failed to add category", {
+          id: toastId,
+        });
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -58,15 +80,15 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
   return (
     <Select>
       <SelectTrigger className="w-full">
-        <SelectValue placeholder="Theme" />
+        <SelectValue placeholder="choose category" />
       </SelectTrigger>
-      <SelectContent className="bg-transparent text-white">
+      <SelectContent className="bg-black text-white ">
         {categories.length > 0 &&
           categories.map((category) => (
             <SelectItem
               key={category._id}
               value={category._id}
-              className="select-item p-regular-14"
+              className="select-item text-xs hover:bg-primary  hover:text-black"
               onClick={() => onChangeHandler()}
             >
               {category.name}
@@ -74,20 +96,28 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
           ))}
 
         <AlertDialog>
-          <AlertDialogTrigger className="text-xs flex w-full items-center rounded-sm py-1 pl-2 hover:text-black  hover:bg-primary">
+          <AlertDialogTrigger className="text-xs flex bg-black w-full items-center rounded-sm py-1 pl-2 hover:text-black  hover:bg-primary">
             <PlusIcon className="mr-2 w-2 h-2" /> add new category
           </AlertDialogTrigger>
           <AlertDialogContent className="bg-black ring-primary-500">
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogTitle>New Category</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
+                <Input
+                  type="text"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  placeholder="Category Name"
+                  className=" mt-3 bg-black text-white"
+                />
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction className="text-black">
+              <AlertDialogAction
+                className="text-black"
+                onClick={() => startTransition(handleAddCategory)}
+              >
                 Continue
               </AlertDialogAction>
             </AlertDialogFooter>

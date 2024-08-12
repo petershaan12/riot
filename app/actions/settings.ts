@@ -88,3 +88,13 @@ export const getCategories = async () => {
   const categories = await db.category.findMany();
   return categories;
 };
+
+export const createCategory = async (name: string) => {
+  const category = await db.category.create({
+    data: {
+      name,
+    },
+  });
+
+  return category;
+};
