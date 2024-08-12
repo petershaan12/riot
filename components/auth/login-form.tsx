@@ -58,7 +58,7 @@ export const LoginForm = () => {
             toast.success(data.success, {
               id: toastId,
             });
-            router.refresh();
+            router.push("/profile");
           }
         })
         .catch((error) => {

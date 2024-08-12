@@ -82,3 +82,9 @@ export const ubahProfile = async (values: z.infer<typeof SettingSchema>) => {
 
   return { success: "Profle Updated" };
 };
+
+
+export const getCategories = async () => {
+  const categories = await db.category.findMany();
+  return categories;
+};

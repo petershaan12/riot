@@ -72,3 +72,8 @@ export const eventsFormSchema = z.object({
   price: z.string(),
   url: z.string().url(),
 });
+
+
+export const categoriesSchema = z.object({
+  name: z.string(),
+});

@@ -93,3 +93,27 @@ model Authenticator {
  
   @@unique([userId, credentialID])
 }
+
+//Category Model
+// Category Model
+model Category {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String    
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  events      Events[]
+}
+
+model Events {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  url         String
+  description String
+  date        DateTime
+  categoryId  String    @db.ObjectId
+  category    Category  @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@unique([title, date])
+}

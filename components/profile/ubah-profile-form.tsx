@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/app/(root)/loading";
 import { ubahProfile } from "@/app/actions/settings";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
@@ -28,12 +29,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-type UbahProfileFormProps = {
-  user: any;
-};
-
 export const UbahProfileForm = () => {
-  const user = useCurrentUser();
+  const { user, isLoading } = useCurrentUser();
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const { update } = useSession();
@@ -52,6 +49,12 @@ export const UbahProfileForm = () => {
     resolver: zodResolver(SettingSchema),
     defaultValues: initialValues,
   });
+
+  useEffect(() => {
+    if (user) {
+      form.reset(initialValues);
+    }
+  }, [user, form.reset]);
 
   const { watch } = form;
 
@@ -121,6 +124,10 @@ export const UbahProfileForm = () => {
         });
     });
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>

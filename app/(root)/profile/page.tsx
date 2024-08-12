@@ -4,18 +4,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { Calendar, Settings } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import Loading from "../loading";
 
 const Page = () => {
-  const user = useCurrentUser();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (user) {
-      setIsLoading(false);
-    }
-  }, [user]);
+  const { user, isLoading } = useCurrentUser();
 
   const getDate = user?.createdAt;
   const dateObject = new Date(getDate);
