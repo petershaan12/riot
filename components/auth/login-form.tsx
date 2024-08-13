@@ -43,11 +43,10 @@ export const LoginForm = () => {
     setError("");
     setSuccess("");
 
-    const { email, password } = values;
     const toastId = toast.loading("Logging in");
 
     startTransition(() => {
-      login(email, password)
+      login(values)
         .then((data) => {
           if (data.error) {
             setError(data.error);

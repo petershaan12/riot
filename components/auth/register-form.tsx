@@ -39,15 +39,10 @@ export const RegisterForm = () => {
     setError("");
     setSuccess("");
 
-    const formData = new FormData();
-    formData.append("name", values.name);
-    formData.append("email", values.email);
-    formData.append("password", values.password);
-
     const toastId = toast.loading("Registering...");
 
     startTransition(() => {
-      register(formData)
+      register(values)
         .then((data) => {
           if (data.error) {
             setError(data.error);

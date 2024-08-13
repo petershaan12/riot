@@ -107,8 +107,11 @@ model Category {
 model Events {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   title       String
+  image       String
   url         String
   description String
+  price       String?
+  isFree      Boolean
   date        DateTime
   categoryId  String    @db.ObjectId
   category    Category  @relation(fields: [categoryId], references: [id])

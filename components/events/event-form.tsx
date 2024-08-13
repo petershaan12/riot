@@ -28,9 +28,10 @@ import { FormSuccess } from "../form-success";
 import { SlCalender } from "react-icons/sl";
 import { PickCalender } from "./pick-calender";
 import Image from "next/image";
-import { DollarSign } from "lucide-react";
+import { DollarSign, Link } from "lucide-react";
 import { FaDollarSign } from "react-icons/fa";
 import { Checkbox } from "../ui/checkbox";
+import { createEvent } from "@/app/actions/events";
 
 type EventsFormProps = {
   userId: string;
@@ -41,9 +42,7 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
-  const [isFreeTicket, setIsFreeTicket] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const initialValues = eventDefaultValues;
 
   const form = useForm<z.infer<typeof eventsFormSchema>>({
@@ -54,7 +53,30 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
   const onSubmit = (values: z.infer<typeof eventsFormSchema>) => {
     setError("");
     setSuccess("");
+
+    const toastId = toast.loading("Creating event...");
+
+    startTransition(() => {
+      createEvent(values)
+        .then((data) => {
+          if (data.error) {
+            setError(data.error);
+            toast.dismiss(toastId);
+          }
+          if (data.success) {
+            setSuccess(data.success);
+            toast.success(data.success, { id: toastId });
+          }
+        })
+        .catch((error) => {
+          setError(error.message);
+          toast.dismiss(toastId);
+        });
+    });
+
+    console.log("halo semua");
   };
+
   return (
     <>
       <Form {...form}>
@@ -73,8 +95,8 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="event title"
-                      className="bg-transparent text-white rounded-md placeholder-white/10"
+                      placeholder="Example: Running 5K"
+                      className=" text-white rounded-md placeholder-white/10"
                     />
                   </FormControl>
                   <FormDescription>
@@ -100,7 +122,7 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                 </FormItem>
               )}
             />
-            <div className=" flex space-x-5 pb-12">
+            <div className="md:flex md:space-x-5 md:space-y-0 space-y-5 md:pb-12">
               <FormField
                 control={form.control}
                 name="description"
@@ -109,8 +131,8 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Description"
-                        className="bg-transparent h-full w-[300px]"
+                        placeholder="Example: Join us for an exhilarating 5k run through scenic trails. Whether you're a seasoned runner or just starting out,"
+                        className=" h-full md:w-[400px]"
                         {...field}
                       />
                     </FormControl>
@@ -149,7 +171,7 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                         {...field}
                         disabled={isPending}
                         placeholder="Event location or Online"
-                        className="bg-transparent text-white rounded-md placeholder-white/10"
+                        className=" text-white rounded-md placeholder-white/10"
                       />
                     </div>
                   </FormControl>
@@ -159,7 +181,7 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
             />
             <FormField
               control={form.control}
-              name="startDateTime"
+              name="dateTime"
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormLabel>Date</FormLabel>
@@ -167,9 +189,6 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                     <div className="flex justify-center items-center ">
                       <SlCalender className="w-6 h-6 mx-2 opacity-70" />
                       <div className="w-full flex justify-center items-center border p-2 rounded-md text-sm">
-                        <p className="text-xs w-[100px] border-r-2">
-                          Start Date{" "}
-                        </p>
                         <DatePicker
                           selected={field.value}
                           onChange={(date: Date) => field.onChange(date)}
@@ -185,36 +204,10 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
-              name="endDateTime"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormControl>
-                    <div className="flex justify-center items-center ">
-                      <SlCalender className="w-6 h-6 mx-2 opacity-70" />
-                      <div className="w-full flex justify-center items-center border p-2 rounded-md text-sm">
-                        <p className="text-xs w-[100px] border-r-2">
-                          End Date{" "}
-                        </p>
-                        <DatePicker
-                          selected={field.value}
-                          onChange={(date: Date) => field.onChange(date)}
-                          showTimeSelect
-                          timeInputLabel="Time:"
-                          dateFormat="MM/dd/yyyy h:mm aa"
-                          wrapperClassName="datePicker "
-                        />
-                      </div>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="location"
+              name="price"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Price</FormLabel>
@@ -223,9 +216,10 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                       <FaDollarSign className="w-6 h-6 mx-2 opacity-70" />
                       <Input
                         {...field}
-                        disabled={isPending || isFreeTicket} // Disable jika free ticket dipilih
+                        type="number"
+                        disabled={isPending || form?.watch("isFree")} // Disable jika free ticket dipilih
                         placeholder="Price"
-                        className="bg-transparent text-white rounded-md placeholder-white/10"
+                        className=" text-white rounded-md placeholder-white/10"
                       />
                     </div>
                   </FormControl>
@@ -241,10 +235,9 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                   <FormControl>
                     <div className="flex ml-5 items-center">
                       <Checkbox
-                        id="isFree"
                         className="mr-2 h-5 w-5 border-2"
-                        checked={isFreeTicket}
-                        onChange={(e) => setIsFreeTicket(field.value)} // Update state ketika checkbox berubah
+                        onCheckedChange={field.onChange}
+                        checked={field.value}
                       />
                       <label
                         htmlFor="isFree"
@@ -254,6 +247,35 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                       </label>
                     </div>
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Create link for this Event</FormLabel>
+                  <FormControl>
+                    <div className="flex justify-center items-center">
+                      <Link className="w-6 h-6 mx-2 opacity-70" />
+                      <div className="flex items-center border border-1 w-full rounded-md focus:ring-primary focus:ring-2">
+                        <p className="border-r-2 px-3 ml-2 text-sm opacity-90">
+                          riot.com/
+                        </p>
+                        <Input
+                          {...field}
+                          disabled={isPending} // Disable jika free ticket dipilih
+                          placeholder="Example: running5k"
+                          className="ml-1 border-none focus-visible:ring-0 focus:ring-0  text-white rounded-md placeholder-white/10"
+                        />
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    Link must be start with alphabet, without space (opsional)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

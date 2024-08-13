@@ -7,18 +7,25 @@ import React from "react";
 
 interface NavItemsProps {
   isLogin: boolean;
+  isAdmin: boolean;
 }
 
-const NavItems: React.FC<NavItemsProps> = ({ isLogin }) => {
+const NavItems: React.FC<NavItemsProps> = ({ isLogin, isAdmin }) => {
   const pathname = usePathname();
   // console.log("isLogin prop:", isLogin);
+  // console.log("isAdmin", isAdmin);
 
   const filteredNavItems = headerLinks.filter((item) => {
     if (item.protected) {
+      if (item.admin) {
+        return isAdmin;
+      }
       return isLogin;
     }
     return true;
   });
+
+  // console.log("filteredNavItems:", filteredNavItems);
   return (
     <ul className="flex flex-col items-start gap-5 md:flex-row">
       {filteredNavItems.map((link) => {
@@ -27,7 +34,7 @@ const NavItems: React.FC<NavItemsProps> = ({ isLogin }) => {
           <li
             key={link.route}
             className={`${
-              isActive ? "text-primary-500 opacity-100" : "opacity-50"
+              isActive ? "text-primary opacity-100" : "opacity-50"
             } flex-center p-medium-4 whitespace-nowrap hover:text-primary-500  hover:opacity-100`}
           >
             <Link href={link.route} className="text-sm ">

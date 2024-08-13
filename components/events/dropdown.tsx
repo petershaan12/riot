@@ -1,5 +1,5 @@
 "use client";
-import React, { startTransition } from "react";
+import React, { startTransition, useCallback } from "react";
 import { useState, useEffect } from "react";
 import {
   Select,
@@ -20,7 +20,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { createCategory, getCategories } from "@/app/actions/settings";
+import { createCategories, getCategories } from "@/app/actions/settings";
 import { PlusIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { toast } from "sonner";
@@ -43,7 +43,7 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
     const toastId = toast.loading("Add Category...");
     if (newCategory.trim()) {
       try {
-        const addedCategory = await createCategory(newCategory);
+        const addedCategory = await createCategories(newCategory);
         setCategories((prevCategories) => [
           ...prevCategories,
           { _id: addedCategory.id, name: addedCategory.name },
@@ -61,21 +61,20 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
     }
   };
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const fetchedCategories = await getCategories();
-      setCategories(
-        fetchedCategories.map((category) => ({
-          _id: category.id,
-          name: category.name,
-        }))
-      );
-    };
-
-    fetchCategories();
+  const fetchCategories = useCallback(async () => {
+    const fetchedCategories = await getCategories();
+    setCategories(
+      fetchedCategories.map((category) => ({
+        _id: category.id,
+        name: category.name,
+      }))
+    );
+    console.log("Categories fetched:", fetchedCategories);
   }, []);
 
-  console.log("category", categories);
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   return (
     <Select>

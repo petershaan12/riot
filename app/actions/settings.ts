@@ -9,7 +9,7 @@ import { get } from "http";
 import path from "path";
 import fs from "fs/promises";
 
-export const ubahProfile = async (values: z.infer<typeof SettingSchema>) => {
+const ubahProfile = async (values: z.infer<typeof SettingSchema>) => {
   const user = await currentUser();
 
   if (!user) {
@@ -83,13 +83,12 @@ export const ubahProfile = async (values: z.infer<typeof SettingSchema>) => {
   return { success: "Profle Updated" };
 };
 
-
-export const getCategories = async () => {
+const getCategories = async () => {
   const categories = await db.category.findMany();
   return categories;
 };
 
-export const createCategory = async (name: string) => {
+const createCategories = async (name: string) => {
   const category = await db.category.create({
     data: {
       name,
@@ -98,3 +97,5 @@ export const createCategory = async (name: string) => {
 
   return category;
 };
+
+export { ubahProfile, getCategories, createCategories };

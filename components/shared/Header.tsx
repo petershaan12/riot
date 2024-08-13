@@ -15,10 +15,12 @@ import {
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { BellIcon, SearchIcon, Settings } from "lucide-react";
+import { UserRole } from "@prisma/client";
 
 const Header = async () => {
   const session = await auth();
   const currentTime = getCurrentTime();
+  const isAdmin = (role: UserRole): boolean => role === UserRole.ADMIN;
 
   return (
     <header className="w-full wrapper z-10 ">
@@ -34,7 +36,10 @@ const Header = async () => {
           </Link>
 
           <nav className="hidden md:block">
-            <NavItems isLogin={!!session} />
+            <NavItems
+              isLogin={!!session}
+              isAdmin={isAdmin(session?.user?.role)}
+            />
           </nav>
         </div>
 

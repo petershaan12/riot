@@ -32,6 +32,7 @@ import * as z from "zod";
 export const UbahProfileForm = () => {
   const { user, isLoading } = useCurrentUser();
   const [error, setError] = useState<string | undefined>();
+  const [errorImage, setErrorImage] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const { update } = useSession();
   const router = useRouter();
@@ -68,7 +69,7 @@ export const UbahProfileForm = () => {
     watch("newPassword") !== initialValues.newPassword;
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setError("");
+    setErrorImage("");
     const file = e.target.files?.[0];
     if (file) {
       const fileType = file.type;
@@ -84,10 +85,10 @@ export const UbahProfileForm = () => {
           };
           reader.readAsDataURL(file);
         } else {
-          setError("Image is more than 5MB");
+          setErrorImage("Image is more than 5MB");
         }
       } else {
-        setError("Only .png or .jpg files are accepted");
+        setErrorImage("Only .png or .jpg files are accepted");
       }
     }
   };
@@ -154,7 +155,7 @@ export const UbahProfileForm = () => {
               <FormField
                 control={form.control}
                 name="image"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Profile Image</FormLabel>
                     <FormControl>
@@ -170,6 +171,7 @@ export const UbahProfileForm = () => {
                   </FormItem>
                 )}
               />
+              <FormError message={errorImage} />
               <FormField
                 control={form.control}
                 name="name"

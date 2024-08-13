@@ -19,10 +19,7 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          500: "#CBFF37",
-          50: " #F6F8FD",
           DEFAULT: "#CBFF37",
-          foreground: "hsl(var(--primary-foreground))",
         },
         coral: {
           500: "#15BF59",
@@ -55,14 +52,6 @@ module.exports = {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
       },
       fontFamily: {
         poppins: ["var(--font-poppins)"],
@@ -72,11 +61,6 @@ module.exports = {
         "hero-img": "url('/assets/images/hero.png')",
         "custom-gradient":
           "linear-gradient(rgba(51, 82, 26, 0.4) 0%, rgba(37, 55, 14, 0.2) 52.58%, rgba(19, 21, 23  , 0) 100%)",
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
         "accordion-down": {

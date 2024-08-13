@@ -13,22 +13,36 @@ const FileUploader = ({
   setFiles,
 }: FileUploaderProps) => {
   const [previewUrl, setPreviewUrl] = useState<string>(imageUrl);
+  const [error, setError] = useState<string | undefined>();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
+    const validTypes = ["image/png", "image/jpeg", "image/jpg"];
     if (files && files.length > 0) {
       const file = files[0];
-      const fileUrl = URL.createObjectURL(file);
-
-      setPreviewUrl(fileUrl);
-      setFiles([file]);
-      onFieldChange(fileUrl);
+      const fileType = file.type;
+      if (validTypes.includes(fileType)) {
+        if (file.size < 1024 * 1024 * 10) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64String = reader.result as string;
+            setPreviewUrl(base64String);
+            setFiles([file]);
+            onFieldChange(base64String);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          setError("Image is more than 10MB");
+        }
+      } else {
+        setError("Only .png or .jpg files are accepted");
+      }
     }
   };
 
   return (
     <>
-      <div className="border border-dashed h-full rounded-md relative overflow-hidden">
+      <div className="border border-dashed h-full w-full rounded-md relative overflow-hidden">
         <input
           type="file"
           className="cursor-pointer block opacity-0 w-full relative z-20 h-[300px] border border-red-500"
@@ -43,13 +57,14 @@ const FileUploader = ({
             />
           ) : (
             <>
-              <CloudUploadIcon className="w-10 h-10 text-gray-400" />
-              <h4 className="text-sm mt-2 text-slate-500">
-                Drop files anywhere to upload
+              <CloudUploadIcon className="w-10 h-10 text-white" />
+              <p className="text-sm mt-2 text-white/40">
+                Drop files anywhere
                 <br />
                 or
-              </h4>
-              <p className="text-sm text-slate-500">Select Files</p>
+              </p>
+              <p className="text-sm text-white/40">Select Files</p>
+              {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
             </>
           )}
         </div>
