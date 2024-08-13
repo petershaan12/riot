@@ -1,11 +1,10 @@
-import NotFound from "@/app/not-found";
 import { EventForm } from "@/components/events/event-form";
 import { currentUser } from "@/lib/utils";
 
 const Page = async () => {
   const user = await currentUser();
 
-  if (!user.role.includes("ADMIN")) {
+  if (!user.role.includes("ORGANIZATION") && !user.role.includes("ADMIN")) {
     return "You are not authorized to access this page";
   }
 

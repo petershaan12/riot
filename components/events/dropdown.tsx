@@ -81,13 +81,13 @@ const Dropdown = ({ value, onFieldChange }: DropdownProps) => {
       <SelectTrigger className="w-full">
         <SelectValue placeholder="choose category" />
       </SelectTrigger>
-      <SelectContent className="bg-black text-white ">
+      <SelectContent className="bg-black  ">
         {categories.length > 0 &&
           categories.map((category) => (
             <SelectItem
               key={category._id}
               value={category._id}
-              className="select-item text-xs hover:bg-primary  hover:text-black"
+              className="hover:text-black text-xs "
             >
               {category.name}
             </SelectItem>

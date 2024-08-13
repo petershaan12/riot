@@ -7,18 +7,18 @@ import React from "react";
 
 interface NavItemsProps {
   isLogin: boolean;
-  isAdmin: boolean;
+  isOrganization: boolean;
 }
 
-const NavItems: React.FC<NavItemsProps> = ({ isLogin, isAdmin }) => {
+const NavItems: React.FC<NavItemsProps> = ({ isLogin, isOrganization }) => {
   const pathname = usePathname();
   // console.log("isLogin prop:", isLogin);
   // console.log("isAdmin", isAdmin);
 
   const filteredNavItems = headerLinks.filter((item) => {
     if (item.protected) {
-      if (item.admin) {
-        return isAdmin;
+      if (item.organization) {
+        return isOrganization;
       }
       return isLogin;
     }
@@ -35,7 +35,7 @@ const NavItems: React.FC<NavItemsProps> = ({ isLogin, isAdmin }) => {
             key={link.route}
             className={`${
               isActive ? "text-primary opacity-100" : "opacity-50"
-            } flex-center p-medium-4 whitespace-nowrap hover:text-primary-500  hover:opacity-100`}
+            } flex-center p-medium-4 whitespace-nowrap hover:text-primary  hover:opacity-100`}
           >
             <Link href={link.route} className="text-sm ">
               {link.label}

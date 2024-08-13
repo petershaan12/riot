@@ -63,12 +63,13 @@ const ubahProfile = async (values: z.infer<typeof SettingSchema>) => {
       }
       const imagePath = path.join(
         "public",
+        "storage",
         "images",
         "profile",
         `${dbUser.id}.png`
       );
       await fs.writeFile(imagePath, base64Data, { encoding: "base64" });
-      values.image = `/images/profile/${dbUser.id}.png`;
+      values.image = `/storage/images/profile/${dbUser.id}.png`;
     } catch (error) {
       return { error: "Failed to save image" };
     }

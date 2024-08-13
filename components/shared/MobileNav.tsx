@@ -1,25 +1,17 @@
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import NavItems from "./NavItems";
-import { auth } from "@/lib/auth";
-import { getCurrentTime } from "@/lib/utils";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import Logout from "../auth/logout";
 
 interface MobileNavProps {
   isLogin: boolean;
+  isOrganization: boolean;
 }
 
-const MobileNav: React.FC<MobileNavProps> = ({ isLogin }) => {
+const MobileNav: React.FC<MobileNavProps> = ({ isLogin, isOrganization }) => {
   return (
     <nav className="md:hidden">
       <Sheet>
@@ -33,7 +25,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLogin }) => {
             height={10}
             alt="riot Logo"
           />
-          <NavItems isLogin={isLogin} />
+          <NavItems isLogin={isLogin} isOrganization={isOrganization} />
           {!isLogin ? (
             <Button
               asChild

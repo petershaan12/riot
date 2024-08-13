@@ -287,7 +287,7 @@ export const UbahProfileForm = () => {
                   />
                 </>
               )}
-            </div>
+        </div>
             <FormError message={error} />
             <FormSuccess message={success} />
             <Separator className="border border-white mt-5 mx-auto" />

@@ -1,25 +1,29 @@
 "use server";
-import { currentUser } from "@/lib/utils";
 import { eventsFormSchema } from "@/schemas";
 import * as z from "zod";
 import { db } from "@/lib/db";
 import path from "path";
 import fs from "fs/promises";
-import { UserRole } from "@prisma/client";
 
 const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
-  const user = await currentUser();
-
-  if (!user) {
+  if (!values.userId) {
     return { error: "Unauthorized" };
-  }
-
-  if (user.role !== UserRole.ADMIN) {
-    return { error: "You are not Admin" };
   }
   const existingUrl = await getUrlEvent(values.url);
   if (existingUrl) {
     return { error: "Url already found, Please Change your url" };
+  }
+
+  if (values.url == "create" || values.url == "edit") {
+    return { error: "Url is invalid, Please change your url" };
+  }
+
+  if (!values.categoryId) {
+    return { error: "Please Choose Category" };
+  }
+
+  if (!values.imageUrl) {
+    return { error: "Please input image" };
   }
 
   if (values.imageUrl) {
@@ -31,18 +35,18 @@ const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
       }
       const imagePath = path.join(
         "public",
+        "storage",
         "images",
         "events",
         `${values.url}.png`
       );
       await fs.writeFile(imagePath, base64Data, { encoding: "base64" });
-      values.imageUrl = `/images/events/${values.url}.png`;
+      values.imageUrl = `/storage/images/events/${values.url}.png`;
     } catch (error) {
       return { error: "Failed to save image" };
     }
   }
 
-  console.log("categoryId", values.categoryId);
   await db.events.create({
     data: {
       title: values.title,
@@ -54,6 +58,7 @@ const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
       isFree: values.isFree,
       date: values.dateTime,
       categoryId: values.categoryId,
+      userId: values.userId,
     },
   });
   return { success: "Create Event success" };
@@ -73,4 +78,4 @@ const getUrlEvent = async (url: string) => {
   }
 };
 
-export { createEvent };
+export { createEvent, getUrlEvent };

@@ -17,7 +17,7 @@ const FileUploader = ({ imageUrl, onFieldChange }: FileUploaderProps) => {
       const file = files[0];
       const fileType = file.type;
       if (validTypes.includes(fileType)) {
-        if (file.size < 1024 * 1024 * 10) {
+        if (file.size < 1024 * 1024 * 2) {
           const reader = new FileReader();
           reader.onloadend = () => {
             const base64String = reader.result as string;
@@ -26,7 +26,7 @@ const FileUploader = ({ imageUrl, onFieldChange }: FileUploaderProps) => {
           };
           reader.readAsDataURL(file);
         } else {
-          setError("Image is more than 10MB");
+          setError("Image is more than 2MB");
         }
       } else {
         setError("Only .png or .jpg files are accepted");
@@ -36,7 +36,7 @@ const FileUploader = ({ imageUrl, onFieldChange }: FileUploaderProps) => {
 
   return (
     <>
-      <div className="border border-dashed h-full w-full rounded-md relative overflow-hidden">
+      <div className="border border-input border-dashed h-full w-full rounded-md relative overflow-hidden">
         <input
           type="file"
           className="cursor-pointer block opacity-0 w-full relative z-20 h-[300px] border border-red-500"

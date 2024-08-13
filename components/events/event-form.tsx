@@ -48,7 +48,10 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
 
   const form = useForm<z.infer<typeof eventsFormSchema>>({
     resolver: zodResolver(eventsFormSchema),
-    defaultValues: initialValues,
+    defaultValues: {
+      ...initialValues,
+      userId: userId,
+    },
   });
 
   const onSubmit = (values: z.infer<typeof eventsFormSchema>) => {
@@ -59,7 +62,7 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
     console.log("categoryId", values.categoryId);
 
     startTransition(() => {
-      createEvent(values)
+      createEvent({ ...values })
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -191,7 +194,7 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                   <FormControl>
                     <div className="flex justify-center items-center ">
                       <SlCalender className="w-6 h-6 mx-2 opacity-70" />
-                      <div className="w-full flex justify-center items-center border p-2 rounded-md text-sm">
+                      <div className="w-full flex justify-center items-center border border-input ring-offset-background p-2 rounded-md text-sm">
                         <DatePicker
                           selected={field.value}
                           onChange={(date: Date | null) => field.onChange(date)}
@@ -263,7 +266,7 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                   <FormControl>
                     <div className="flex justify-center items-center">
                       <Link className="w-6 h-6 mx-2 opacity-70" />
-                      <div className="flex items-center border border-1 w-full rounded-md focus:ring-primary focus:ring-2">
+                      <div className="flex items-center border border-input ring-offset-background w-full rounded-md focus:ring-primary focus:ring-2">
                         <p className="border-r-2 px-3 ml-2 text-sm opacity-90">
                           riot.com/
                         </p>
