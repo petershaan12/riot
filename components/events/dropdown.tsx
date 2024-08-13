@@ -32,10 +32,10 @@ interface ICategory {
 
 type DropdownProps = {
   value?: string;
-  onChangeHandler: () => void;
+  onFieldChange: (value: string) => void;
 };
 
-const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
+const Dropdown = ({ value, onFieldChange }: DropdownProps) => {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [newCategory, setNewCategory] = useState("");
 
@@ -69,7 +69,7 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
         name: category.name,
       }))
     );
-    console.log("Categories fetched:", fetchedCategories);
+    // console.log("Categories fetched:", fetchedCategories);
   }, []);
 
   useEffect(() => {
@@ -77,7 +77,7 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
   }, [fetchCategories]);
 
   return (
-    <Select>
+    <Select onValueChange={onFieldChange} defaultValue={value}>
       <SelectTrigger className="w-full">
         <SelectValue placeholder="choose category" />
       </SelectTrigger>
@@ -88,7 +88,6 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
               key={category._id}
               value={category._id}
               className="select-item text-xs hover:bg-primary  hover:text-black"
-              onClick={() => onChangeHandler()}
             >
               {category.name}
             </SelectItem>

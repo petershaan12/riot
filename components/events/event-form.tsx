@@ -32,6 +32,7 @@ import { DollarSign, Link } from "lucide-react";
 import { FaDollarSign } from "react-icons/fa";
 import { Checkbox } from "../ui/checkbox";
 import { createEvent } from "@/app/actions/events";
+import { useRouter } from "next/navigation";
 
 type EventsFormProps = {
   userId: string;
@@ -39,11 +40,11 @@ type EventsFormProps = {
 };
 
 export const EventForm = ({ userId, type }: EventsFormProps) => {
-  const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const [isPending, startTransition] = useTransition();
   const initialValues = eventDefaultValues;
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof eventsFormSchema>>({
     resolver: zodResolver(eventsFormSchema),
@@ -55,6 +56,7 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
     setSuccess("");
 
     const toastId = toast.loading("Creating event...");
+    console.log("categoryId", values.categoryId);
 
     startTransition(() => {
       createEvent(values)
@@ -66,6 +68,8 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
           if (data.success) {
             setSuccess(data.success);
             toast.success(data.success, { id: toastId });
+            form.reset();
+            router.push(`/events/${values.url}`);
           }
         })
         .catch((error) => {
@@ -115,7 +119,7 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                   <FormControl>
                     <Dropdown
                       value={field.value}
-                      onChangeHandler={field.onChange}
+                      onFieldChange={field.onChange}
                     />
                   </FormControl>
                   <FormMessage />
@@ -148,9 +152,8 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                     <FormLabel>Image</FormLabel>
                     <FormControl>
                       <FileUploader
-                        onFieldChange={field.onChange}
                         imageUrl={field.value}
-                        setFiles={setFiles}
+                        onFieldChange={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />
@@ -191,7 +194,7 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                       <div className="w-full flex justify-center items-center border p-2 rounded-md text-sm">
                         <DatePicker
                           selected={field.value}
-                          onChange={(date: Date) => field.onChange(date)}
+                          onChange={(date: Date | null) => field.onChange(date)}
                           showTimeSelect
                           timeInputLabel="Time:"
                           dateFormat="MM/dd/yyyy h:mm aa"

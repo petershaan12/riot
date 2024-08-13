@@ -4,14 +4,9 @@ import React, { useState, Dispatch, SetStateAction } from "react";
 type FileUploaderProps = {
   imageUrl: string;
   onFieldChange: (value: string) => void;
-  setFiles: Dispatch<SetStateAction<File[]>>;
 };
 
-const FileUploader = ({
-  imageUrl,
-  onFieldChange,
-  setFiles,
-}: FileUploaderProps) => {
+const FileUploader = ({ imageUrl, onFieldChange }: FileUploaderProps) => {
   const [previewUrl, setPreviewUrl] = useState<string>(imageUrl);
   const [error, setError] = useState<string | undefined>();
 
@@ -27,7 +22,6 @@ const FileUploader = ({
           reader.onloadend = () => {
             const base64String = reader.result as string;
             setPreviewUrl(base64String);
-            setFiles([file]);
             onFieldChange(base64String);
           };
           reader.readAsDataURL(file);

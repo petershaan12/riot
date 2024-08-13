@@ -1,8 +1,7 @@
 "use server";
-import { currentUser, saltAndHashPassword } from "@/lib/utils";
-import { eventsFormSchema, SettingSchema } from "@/schemas";
+import { currentUser } from "@/lib/utils";
+import { eventsFormSchema } from "@/schemas";
 import * as z from "zod";
-import { getUserByEmail, getUserById } from "./auth";
 import { db } from "@/lib/db";
 import path from "path";
 import fs from "fs/promises";
@@ -15,13 +14,15 @@ const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
     return { error: "Unauthorized" };
   }
 
-  console.log(user);
-
-  if (user.role === UserRole.ADMIN) {
+  if (user.role !== UserRole.ADMIN) {
     return { error: "You are not Admin" };
   }
+  const existingUrl = await getUrlEvent(values.url);
+  if (existingUrl) {
+    return { error: "Url already found, Please Change your url" };
+  }
 
-  if (values.imageUrl && values.imageUrl) {
+  if (values.imageUrl) {
     try {
       // Extract the base64 part of the image string if it's encoded
       const base64Data = values.imageUrl.split(";base64,").pop();
@@ -41,13 +42,35 @@ const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
     }
   }
 
+  console.log("categoryId", values.categoryId);
   await db.events.create({
     data: {
-      ...values,
+      title: values.title,
+      image: values.imageUrl,
+      url: values.url,
+      description: values.description,
+      price: values.price,
+      location: values.location,
+      isFree: values.isFree,
       date: values.dateTime,
+      categoryId: values.categoryId,
     },
   });
   return { success: "Create Event success" };
+};
+
+const getUrlEvent = async (url: string) => {
+  try {
+    const event = await db.events.findUnique({
+      where: {
+        url,
+      },
+    });
+    return event;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 };
 
 export { createEvent };
