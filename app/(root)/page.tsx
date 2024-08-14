@@ -1,6 +1,10 @@
 import Image from "next/image";
+import { getAllEvents } from "../actions/events";
+import EventCard from "@/components/events/event-card";
 
-export default function Home() {
+export default async function Home() {
+  const events = await getAllEvents({ limit: 3 });
+
   return (
     <>
       <section className="bg-contain p-5 md:py-10">
@@ -23,12 +27,17 @@ export default function Home() {
         id="events"
         className="wrapper my-8 flex flex-col items-center gap-8 md:gap-12"
       >
-        <h2 className="uppercase font-monument-bold text-3xl tracking-wider md:leading-[65px] ">
-          Events
-        </h2>
-        <div className="flex flex-col w-full gap-5 md:flex-row">
-          Search CategoryFilter
+        <div className="mx-auto ">
+          <h2 className="uppercase font-monument-bold text-4xl ">Events</h2>
+          <p className="text-center"> Latest Events</p>
         </div>
+        <EventCard
+          data={events?.data}
+          emptyTitle="No Events Found"
+          limit={5}
+          page={0}
+          totalPages={events?.totalPages}
+        />
       </section>
     </>
   );

@@ -4,6 +4,7 @@ import * as z from "zod";
 import { db } from "@/lib/db";
 import path from "path";
 import fs from "fs/promises";
+import { handleError } from "@/lib/utils";
 
 const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
   if (!values.userId) {
@@ -68,14 +69,60 @@ const getUrlEvent = async (url: string) => {
   try {
     const event = await db.events.findUnique({
       where: {
-        url,
+        url
       },
     });
     return event;
   } catch (e) {
-    console.log(e);
-    return null;
+    handleError(e);
   }
 };
 
-export { createEvent, getUrlEvent };
+//make app
+const getAllEvents = async ({ filter = "", limit = 5, page = 1 }) => {
+  try {
+    const filterOptions = {} as any;
+
+    // Terapkan filter berdasarkan nilai filter
+    if (filter) {
+      filterOptions.category = {
+        name: filter,
+      };
+    }
+
+    // Hitung offset berdasarkan halaman yang diminta
+    const offset = (page - 1) * limit;
+
+    const events = await db.events.findMany({
+      where: filterOptions,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        user: {
+          select: {
+            image: true,
+            username: true,
+            name: true,
+          },
+        },
+      },
+      take: limit, // Batasi jumlah event yang diambil
+      skip: offset, // Lewati event berdasarkan offset
+    });
+    const totalEvents = await db.events.count();
+    return {
+      data: JSON.parse(JSON.stringify(events)),
+      totalPages: Math.ceil(totalEvents / limit),
+    };
+  } catch (e) {
+    handleError(e);
+  }
+};
+
+export { createEvent, getUrlEvent, getAllEvents };

@@ -2,6 +2,7 @@ import { getUserById } from "@/app/actions/auth";
 import { getUrlEvent } from "@/app/actions/events";
 import CopyLink from "@/components/events/copylink";
 import TidakDitemukan from "@/components/shared/TidakDitemukan";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,6 @@ import Image from "next/image";
 
 type SearchParamsProps = {
   params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
 };
 
 const Page = async ({ params: { slug } }: SearchParamsProps) => {
@@ -33,13 +33,17 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
     <>
       <section className="p-5 md:py-10 flex space-x-5 ">
         <div className="">
-          <Image
-            src={event?.image}
-            width={250}
-            height={250}
-            alt="Gambar Events"
-            className="rounded-2xl"
-          />
+          <div className="w-[250px]  ">
+            <AspectRatio ratio={1 / 1} className="flex-center">
+              <Image
+                src={event?.image}
+                width={500}
+                height={500}
+                alt="Gambar Events"
+                className="rounded-2xl "
+              />
+            </AspectRatio>
+          </div>
           <CopyLink />
           <div className="flex items-center">
             <Avatar className="cursor-pointer">

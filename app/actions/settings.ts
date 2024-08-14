@@ -1,5 +1,5 @@
 "use server";
-import { currentUser, saltAndHashPassword } from "@/lib/utils";
+import { currentUser, handleError, saltAndHashPassword } from "@/lib/utils";
 import { SettingSchema } from "@/schemas";
 import * as z from "zod";
 import { getUserByEmail, getUserById } from "./auth";
@@ -52,7 +52,6 @@ const ubahProfile = async (values: z.infer<typeof SettingSchema>) => {
     values.bio = values.bio.substring(0, 150);
   }
 
-
   //Change Image
   if (values.image && values.image !== dbUser.image) {
     try {
@@ -91,13 +90,36 @@ const getCategories = async () => {
 };
 
 const createCategories = async (name: string) => {
+  const exisitingCategory = await getDuplicateCategories(name);
+  if (exisitingCategory) {
+    return { error: "Category already exist" };
+  }
+
+  if (name.length > 20) {
+    return { error: "Category name cannot exceed 20 characters" };
+  }
+
   const category = await db.category.create({
     data: {
       name,
     },
   });
 
-  return category;
+  return { success: "Category added", id: category.id, name: category.name };
+};
+
+const getDuplicateCategories = async (name: string) => {
+  try {
+    const category = await db.category.findFirst({
+      where: {
+        name,
+      },
+    });
+
+    return category;
+  } catch (e) {
+    handleError(e);
+  }
 };
 
 export { ubahProfile, getCategories, createCategories };

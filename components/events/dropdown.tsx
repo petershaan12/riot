@@ -41,24 +41,29 @@ const Dropdown = ({ value, onFieldChange }: DropdownProps) => {
 
   const handleAddCategory = async () => {
     const toastId = toast.loading("Add Category...");
-    if (newCategory.trim()) {
-      try {
-        const addedCategory = await createCategories(newCategory);
-        setCategories((prevCategories) => [
-          ...prevCategories,
-          { _id: addedCategory.id, name: addedCategory.name },
-        ]);
-        setNewCategory("");
-        toast.success("Category added", {
-          id: toastId,
+
+    startTransition(() => {
+      createCategories(newCategory)
+        .then((data) => {
+          if (data.error) {
+            toast.error(data.error, { id: toastId });
+            return;
+          }
+          if (data.success) {
+            setCategories((prevCategories) => [
+              ...prevCategories,
+              { _id: data.id, name: data.name },
+            ]);
+            setNewCategory("");
+            toast.success(data.success, {
+              id: toastId,
+            });
+          }
+        })
+        .catch(() => {
+          toast.error("Failed to add category");
         });
-      } catch (error) {
-        console.error("Error adding category:", error);
-        toast.error("Failed to add category", {
-          id: toastId,
-        });
-      }
-    }
+    });
   };
 
   const fetchCategories = useCallback(async () => {
@@ -114,7 +119,7 @@ const Dropdown = ({ value, onFieldChange }: DropdownProps) => {
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 className="text-black"
-                onClick={() => startTransition(handleAddCategory)}
+                onClick={() => handleAddCategory()}
               >
                 Continue
               </AlertDialogAction>

@@ -46,8 +46,14 @@ const Header = async () => {
 
         <div className="flex  gap-3 items-center">
           <p className="opacity-50 sm:text-base text-sm">{currentTime}</p>
-          <SearchIcon className="w-4 opacity-50" strokeWidth={3} />
-          <BellIcon className="w-4 opacity-50" strokeWidth={3} />
+          <SearchIcon
+            className="w-4 opacity-50 hidden md:block"
+            strokeWidth={3}
+          />
+          <BellIcon
+            className="w-4 opacity-50 hidden md:block"
+            strokeWidth={3}
+          />
           {!session?.user ? (
             <Button
               asChild

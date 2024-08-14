@@ -1,7 +1,7 @@
 export default function Loading() {
   return (
     <>
-      <div className="flex flex-col justify-center items-center h-[300px] gap-y-1">
+      <div className="flex flex-col justify-center items-center mt-[150px] gap-y-1">
         <img
           src={"/animation/loading.svg"}
           alt="Loading animation"
