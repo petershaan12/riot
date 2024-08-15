@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import bcrypt from "bcryptjs";
 import { auth } from "./auth";
 import qs from "query-string";
+import { format } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -102,4 +103,16 @@ export function formUrlQuery({ params, key, value }: UrlQueryParams) {
 export const handleError = (error: unknown) => {
   console.error(error);
   throw new Error(typeof error === "string" ? error : JSON.stringify(error));
+};
+
+export const formatDateTime = (dateTime: Date) => {
+  const formattedDate = format(dateTime, "EEEE, MMMM d");
+  const formattedTime = format(dateTime, "h:mm a");
+  const bigNumberDate = format(dateTime, "d");
+
+  return {
+    formattedDate,
+    formattedTime,
+    bigNumberDate,
+  };
 };

@@ -3,7 +3,7 @@ import { signIn, signOut } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { saltAndHashPassword } from "@/lib/utils";
 import { DEFAULT_LOGIN_REDIRECT } from "@/route";
-import { LoginSchema, RegisterSchema } from "@/schemas";
+import { LoginSchema, RegisterSchema, UsernameSchema } from "@/schemas";
 import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 import * as z from "zod";
@@ -65,6 +65,31 @@ const register = async (values: z.infer<typeof RegisterSchema>) => {
   return { success: "Register success" };
 };
 
+const updateUsername = async (
+  userId: string,
+  values: z.infer<typeof UsernameSchema>
+) => {
+  const username = values.username as string;
+  // console.log(userId, values);
+
+  try {
+    const existingUser = await db.user.findFirst({ where: { username } });
+
+    if (existingUser) {
+      return { error: "Username already exists" };
+    }
+
+    await db.user.update({
+      where: { id: userId },
+      data: { username },
+    });
+
+    return { success: "Username updated successfully" };
+  } catch (error) {
+    return { error: "Failed to update username" };
+  }
+};
+
 const logout = async () => {
   await signOut({ redirectTo: "/" });
   revalidatePath("/");
@@ -120,4 +145,6 @@ export {
   getUserByEmail,
   getUserById,
   getAccountByUserId,
+  generateUsername,
+  updateUsername,
 };

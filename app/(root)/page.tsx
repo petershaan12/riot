@@ -27,7 +27,7 @@ export default async function Home() {
         id="events"
         className="wrapper my-8 flex flex-col items-center gap-8 md:gap-12"
       >
-        <div className="mx-auto ">
+        <div className="mx-auto">
           <h2 className="uppercase font-monument-bold text-4xl ">Events</h2>
           <p className="text-center"> Latest Events</p>
         </div>

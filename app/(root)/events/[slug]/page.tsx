@@ -7,8 +7,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { format } from "date-fns";
+import { currentUser, formatDateTime } from "@/lib/utils";
+import { Settings } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 type SearchParamsProps = {
   params: { slug: string };
@@ -20,15 +22,9 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
   if (!event) {
     return <TidakDitemukan />;
   }
-  const userEvent = await getUserById(event?.userId as string);
-  const dateTime = event?.date;
-  const date = new Date(dateTime);
 
-  const formattedDate = format(date, "EEEE, MMMM d");
-  const formattedTime = format(date, "h:mm a");
-  const bigNumberDate = format(date, "d");
+  const user = await currentUser();
 
-  console.log(event);
   return (
     <>
       <section className="p-5 md:py-10 flex space-x-5 ">
@@ -47,36 +43,37 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
           <CopyLink />
           <div className="flex items-center">
             <Avatar className="cursor-pointer">
-              <AvatarImage src={userEvent?.image || ""} />
+              <AvatarImage src={event.user.image || ""} />
               <AvatarFallback>
                 <p className="font-bold uppercase">
-                  {userEvent?.name?.substring(0, 2)}
+                  {event.user.name?.substring(0, 2)}
                 </p>
               </AvatarFallback>
             </Avatar>
             <div className="p-3">
               <p className="text-xs">presented by</p>
-              <p className="font-bold">{userEvent?.name}</p>
+              <p className="font-bold">{event.user.name}</p>
             </div>
           </div>
           <Separator className="bg-white/50 my-5" />
           <p className="text-xs opacity-50">Contact The Host</p>
           <p className="text-xs opacity-50 mt-4">Report Events</p>
         </div>
+
         <div className="w-[600px]">
-          <Badge className="bg-[#70FF00]/20 my-2  hover:text-black py-1 px-4 mt-5">
+          {!user && <Badge className="bg-[#70FF00]/20 my-2  hover:text-black py-1 px-4 mt-5">
             Youre Invites to join ✨
-          </Badge>
+          </Badge>}
           <h1 className="text-5xl uppercase font-bold">{event?.title}</h1>
           <div className="flex items-center space-x-2 mt-5">
             <div className="border border-white/50 rounded-lg w-12 flex-center px-3 py-2 ">
               <h1 className=" text-2xl font-bold  text-white">
-                {bigNumberDate}
+                {formatDateTime(event.date).bigNumberDate}
               </h1>
             </div>
             <div className="leading-5">
-              <p>{formattedDate}</p>
-              <p>{formattedTime} </p>
+              <p> {formatDateTime(event.date).formattedDate}</p>
+              <p> {formatDateTime(event.date).formattedTime}</p>
             </div>
           </div>
           <div className="flex items-center space-x-2 py-5">
@@ -95,10 +92,20 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
           </div>
           <Button
             type="submit"
-            className="w-full text-black font-monument-regular text-xl "
+            className="w-full text-black font-monument-regular text-xl my-2 "
           >
             Register Now
           </Button>
+          {event?.userId === user?.id && (
+            <Link href={`/events/${event.url}/edit`} className="mt-5">
+              <Button
+                type="submit"
+                className="w-full text-primary bg-transparent border border-primary  font-monument-regular text-xl "
+              >
+                Edit This Event
+              </Button>
+            </Link>
+          )}
 
           <div className="mt-10">
             <h4 className="py-2">Location Detail</h4>

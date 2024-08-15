@@ -4,7 +4,7 @@
  * @type {string[]}
  */
 
-export const publicRoutes = ["/", "/about", "/events", "/rank"];
+export const publicRoutes = ["/", "/about", "/events", "/rank", "/events/*"];
 
 /**
  * An Array of rotues that are arcesible to the authenticated user
@@ -26,3 +26,4 @@ export const apiAuthPrefix = "/api/auth";
  * @type {string}
  */
 export const DEFAULT_LOGIN_REDIRECT = "/profile";
+export const DEFAULT_USERNAME_REDIRECT = "/auth/username";

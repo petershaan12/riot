@@ -31,19 +31,53 @@ import Image from "next/image";
 import { DollarSign, Link } from "lucide-react";
 import { FaDollarSign } from "react-icons/fa";
 import { Checkbox } from "../ui/checkbox";
-import { createEvent } from "@/app/actions/events";
+import { createEvent, editEvent } from "@/app/actions/events";
 import { useRouter } from "next/navigation";
+
+type Category = {
+  name: string | null;
+};
+
+type User = {
+  name: string | null;
+  image: string | null;
+  username: string | null;
+};
+
+type Event = {
+  id: string;
+  user: User;
+  date: Date;
+  url: string;
+  title: string;
+  image: string;
+  category: Category;
+};
 
 type EventsFormProps = {
   userId: string;
   type: "create" | "edit";
+  event?: Event;
+  eventId?: string;
 };
 
-export const EventForm = ({ userId, type }: EventsFormProps) => {
+export const EventForm = ({
+  userId,
+  type,
+  event,
+  eventId,
+}: EventsFormProps) => {
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const [isPending, startTransition] = useTransition();
-  const initialValues = eventDefaultValues;
+  const initialValues =
+    event && type === "edit"
+      ? {
+          ...event,
+          imageUrl: event.image,
+          dateTime: event.date,
+        }
+      : eventDefaultValues;
   const router = useRouter();
 
   const form = useForm<z.infer<typeof eventsFormSchema>>({
@@ -58,11 +92,19 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
     setError("");
     setSuccess("");
 
-    const toastId = toast.loading("Creating event...");
-    console.log("categoryId", values.categoryId);
+    const toastId = toast.loading(
+      type === "edit" ? "Updating event..." : "Creating event..."
+    );
+    // console.log("categoryId", values.categoryId);
+
+    if (!eventId) {
+      router.back();
+      return;
+    }
 
     startTransition(() => {
-      createEvent({ ...values })
+      const operation = type === "edit" ? editEvent : createEvent;
+      operation({ ...values })
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -71,7 +113,9 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
           if (data.success) {
             setSuccess(data.success);
             toast.success(data.success, { id: toastId });
-            form.reset();
+            if (type !== "edit") {
+              form.reset();
+            }
             router.push(`/events/${values.url}`);
           }
         })
@@ -80,8 +124,6 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
           toast.dismiss(toastId);
         });
     });
-
-    console.log("halo semua");
   };
 
   return (
@@ -147,6 +189,7 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="imageUrl"
@@ -295,7 +338,7 @@ export const EventForm = ({ userId, type }: EventsFormProps) => {
             disabled={isPending}
             className="w-full text-black font-monument-regular uppercase text-xl"
           >
-            Submit
+            {type === "edit" ? "Update Event" : "Create Event"}
           </Button>
         </form>
       </Form>

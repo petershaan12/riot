@@ -30,13 +30,13 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
                 limit={5}
                 page={page}
                 totalPages={events?.totalPages}
+                className="hover:-translate-x-12 "
               />
             </section>
             <section id="sideBar" className="md:ml-5">
               <div className="bg-[#393939]/20 rounded-2xl border border-white/20 backdrop-blur-xl  hidden md:block">
                 <Calendar mode="single" className="rounded-md" />
               </div>
-
               <Category />
             </section>
           </div>

@@ -42,6 +42,12 @@ export const LoginSchema = z.object({
   }),
 });
 
+export const UsernameSchema = z.object({
+  username: z.string().min(3, {
+    message: "Username is required",
+  }),
+});
+
 export const RegisterSchema = z.object({
   email: z.string().email({
     message: "Email is required",

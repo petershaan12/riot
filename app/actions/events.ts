@@ -65,11 +65,88 @@ const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
   return { success: "Create Event success" };
 };
 
+const editEvent = async (values: z.infer<typeof eventsFormSchema>) => {
+  if (!values.userId) {
+    return { error: "Unauthorized" };
+  }
+
+  const existingEvent = await db.events.findUnique({
+    where: { url: values.url },
+  });
+
+  if (!existingEvent) {
+    return { error: "Event not found" };
+  }
+
+  if (existingEvent.userId !== values.userId) {
+    return { error: "You are not authorized to edit this event" };
+  }
+
+  if (!values.categoryId) {
+    return { error: "Please Choose Category" };
+  }
+
+  if (!values.imageUrl) {
+    return { error: "Please input image" };
+  }
+
+  if (values.imageUrl) {
+    try {
+      // Extract the base64 part of the image string if it's encoded
+      const base64Data = values.imageUrl.split(";base64,").pop();
+      if (!base64Data) {
+        return { error: "Invalid image" };
+      }
+      const imagePath = path.join(
+        "public",
+        "storage",
+        "images",
+        "events",
+        `${values.url}.png`
+      );
+      await fs.writeFile(imagePath, base64Data, { encoding: "base64" });
+      values.imageUrl = `/storage/images/events/${values.url}.png`;
+    } catch (error) {
+      return { error: "Failed to save image" };
+    }
+  }
+
+  await db.events.update({
+    where: { url: values.url },
+    data: {
+      title: values.title,
+      image: values.imageUrl,
+      description: values.description,
+      price: values.price,
+      location: values.location,
+      isFree: values.isFree,
+      date: values.dateTime,
+      categoryId: values.categoryId,
+    },
+  });
+
+  return { success: "Edit Event success" };
+};
+
 const getUrlEvent = async (url: string) => {
   try {
     const event = await db.events.findUnique({
       where: {
-        url
+        url,
+      },
+      include: {
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        user: {
+          select: {
+            image: true,
+            username: true,
+            name: true,
+          },
+        },
       },
     });
     return event;
@@ -125,4 +202,36 @@ const getAllEvents = async ({ filter = "", limit = 5, page = 1 }) => {
   }
 };
 
-export { createEvent, getUrlEvent, getAllEvents };
+const getUserEvents = async (userId: string) => {
+  try {
+    const events = await db.events.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        user: {
+          select: {
+            image: true,
+            username: true,
+            name: true,
+          },
+        },
+      },
+    });
+    return {
+      data: JSON.parse(JSON.stringify(events)),
+    };
+  } catch (e) {
+    handleError(e);
+  }
+};
+
+export { createEvent, editEvent, getUrlEvent, getAllEvents, getUserEvents };

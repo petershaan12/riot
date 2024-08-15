@@ -7,7 +7,7 @@ const Page = async () => {
   if (!user.role.includes("ORGANIZATION") && !user.role.includes("ADMIN")) {
     return "You are not authorized to access this page";
   }
-
+  
   return (
     <>
       <section className="bg-contain p-5 md:py-10">
