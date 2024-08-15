@@ -95,8 +95,6 @@ model Authenticator {
   @@unique([userId, credentialID])
 }
 
-//Category Model
-// Category Model
 model Category {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
@@ -123,4 +121,15 @@ model Events {
   user        User     @relation(fields: [userId], references: [id])
 
   @@unique([title, date])
+}
+
+model EventAttendees {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  phone     String
+  eventId   String   @db.ObjectId
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([eventId, userId])
 }

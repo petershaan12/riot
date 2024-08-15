@@ -48,6 +48,13 @@ export const UsernameSchema = z.object({
   }),
 });
 
+export const EventAttendeeSchema = z.object({
+  phone: z
+    .string()
+    .min(10, { message: "Enter valid phone number" })
+    .max(15, { message: "Enter valid phone number" }),
+});
+
 export const RegisterSchema = z.object({
   email: z.string().email({
     message: "Email is required",

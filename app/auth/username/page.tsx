@@ -10,7 +10,7 @@ const UsernamePage = async () => {
   return (
     <>
       <CardWrapper>
-        <UsernameForm userId={session?.user.id} />
+        <UsernameForm userId={session?.user.id as string} />
       </CardWrapper>
     </>
   );

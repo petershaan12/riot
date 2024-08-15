@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            background-color: #fff;
+            font-family: 'Open Sans', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .text {
+            font-size: 14px;
+            color: #000;
+            line-height: 1.5;
+        }
+        .button {
+            background-color: #cbff37;
+            color: #000000;
+            font-weight: bold;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 20px;
+            width: 100%;
+            margin-top: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .footer-text {
+            font-size: 12px;
+            color: #717171;
+            line-height: 1.5;
+            margin-top: 20px;
+        }
+        .social-icons img {
+            vertical-align: middle;
+            width: 32px;
+            height: 32px;
+        }
+        hr {
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://api.peduly.com/icon/icon/peduly_icon_new.png" alt="Riot Logo" height="150" width="150" />
+        <p class="text">Terima kasih <strong>{{ nama }}</strong>,</p>
+        <p class="text">Anda telah berhasil mendaftar di event <strong>{{ judul }}</strong>.</p>
+        <p class="text">Silahkan join grup WhatsApp dengan klik tombol di bawah ini untuk informasi lebih lanjut:</p>
+        <a href="{{ $tautan }}" class="button">Masuk Grup WA</a>
+        <p class="footer-text">Email ini dibuat otomatis. Mohon tidak mengirimkan balasan ke email ini. Jika membutuhkan bantuan, silahkan hubungi <a href="https://peduly.com/kontak" target="_blank" style="text-decoration: underline; color: #c51230;">Kontak Kami</a>.</p>
+        <p class="footer-text">Ikuti kami di:</p>
+        <div class="social-icons" style="margin: 10px 0;">
+            <a href="https://x.com/peduly_id" target="_blank" style="margin-right: 10px;">
+                <img src="https://api.peduly.com/icon/icon/email/twitter2x.png" alt="Twitter" />
+            </a>
+            <a href="https://www.instagram.com/peduly_id/" target="_blank">
+                <img src="https://api.peduly.com/icon/icon/email/instagram2x.png" alt="Instagram" />
+            </a>
+        </div>
+        <hr />
+    </div>
+</body>
+</html>

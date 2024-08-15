@@ -1,10 +1,11 @@
 "use server";
-import { eventsFormSchema } from "@/schemas";
+import { EventAttendeeSchema, eventsFormSchema } from "@/schemas";
 import * as z from "zod";
 import { db } from "@/lib/db";
 import path from "path";
 import fs from "fs/promises";
 import { handleError } from "@/lib/utils";
+import { compileAttendTemplate, sendMail } from "@/lib/mail";
 
 const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
   if (!values.userId) {
@@ -128,6 +129,68 @@ const editEvent = async (values: z.infer<typeof eventsFormSchema>) => {
   return { success: "Edit Event success" };
 };
 
+const attendEvent = async (
+  eventId: string,
+  eventUrl: string,
+  user: any,
+  values: z.infer<typeof EventAttendeeSchema>
+) => {
+  if (!user) {
+    return { error: "Unauthorized" };
+  }
+
+  const existingEvent = await db.events.findUnique({
+    where: { url: eventUrl },
+  });
+
+  if (!existingEvent) {
+    return { error: "Event not found" };
+  }
+
+  const existingAttendee = await getUserAttendEvent(user.id, eventId);
+
+  if (existingAttendee) {
+    return { error: "You already attend this event" };
+  }
+
+  await db.eventAttendees.create({
+    data: {
+      eventId: eventId,
+      userId: user.id,
+      phone: values.phone,
+    },
+  });
+
+  if (user) {
+    try {
+      await sendMail({
+        to: user.email,
+        name: user.name,
+        subject: "Invitation to attend event",
+        body: compileAttendTemplate(user.name, eventUrl),
+      });
+    } catch (error) {
+      return { error: "Attend Event success but failed to send email" };
+    }
+  }
+
+  return { success: "Attend Event success, please check your email" };
+};
+
+const getUserAttendEvent = async (userId: string, eventId: string) => {
+  try {
+    const attend = await db.eventAttendees.findFirst({
+      where: {
+        userId,
+        eventId,
+      },
+    });
+    return attend;
+  } catch (e) {
+    handleError(e);
+  }
+};
+
 const getUrlEvent = async (url: string) => {
   try {
     const event = await db.events.findUnique({
@@ -234,4 +297,12 @@ const getUserEvents = async (userId: string) => {
   }
 };
 
-export { createEvent, editEvent, getUrlEvent, getAllEvents, getUserEvents };
+export {
+  createEvent,
+  editEvent,
+  getUrlEvent,
+  getAllEvents,
+  getUserEvents,
+  attendEvent,
+  getUserAttendEvent,
+};

@@ -1,5 +1,6 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 import { useState } from "react";
 
 type User = {
@@ -51,7 +52,13 @@ const Rank = ({ users }: RankComponent) => {
                 </AvatarFallback>
               </Avatar>
               <span className="text-lg font-semibold">
-                {index + 1}. {user.username}
+                {index + 1}.
+                <Link
+                  href={`/profile/${user.username}`}
+                  className="hover:underline hover:text-primary px-2"
+                >
+                  {user.username}
+                </Link>
               </span>
             </div>
             <span className="text-lg">

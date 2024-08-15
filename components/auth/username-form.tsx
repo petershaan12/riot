@@ -20,7 +20,11 @@ import { useRouter } from "next/navigation";
 import { login, updateUsername } from "@/app/actions/auth";
 import { toast } from "sonner";
 
-export const UsernameForm = ({ userId }: any) => {
+type UsernameFormProps = {
+  userId: string;
+};
+
+export const UsernameForm = ({ userId }: UsernameFormProps) => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();

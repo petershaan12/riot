@@ -1,16 +1,15 @@
-import { getUserById } from "@/app/actions/auth";
-import { getUrlEvent } from "@/app/actions/events";
+import { getUrlEvent, getUserAttendEvent } from "@/app/actions/events";
 import CopyLink from "@/components/events/copylink";
-import TidakDitemukan from "@/components/shared/TidakDitemukan";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { currentUser, formatDateTime } from "@/lib/utils";
-import { Settings } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import EventDialog from "@/components/events/event-dialog";
 
 type SearchParamsProps = {
   params: { slug: string };
@@ -20,10 +19,13 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
   const event = await getUrlEvent(slug);
 
   if (!event) {
-    return <TidakDitemukan />;
+    redirect("/404");
   }
 
   const user = await currentUser();
+  const isAttend = await getUserAttendEvent(user?.id, event?.id);
+
+ 
 
   return (
     <>
@@ -61,9 +63,11 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
         </div>
 
         <div className="w-[600px]">
-          {!user && <Badge className="bg-[#70FF00]/20 my-2  hover:text-black py-1 px-4 mt-5">
-            Youre Invites to join ✨
-          </Badge>}
+          {!user && (
+            <Badge className="bg-[#70FF00]/20 my-2  hover:text-black py-1 px-4 mt-5">
+              Youre Invites to join ✨
+            </Badge>
+          )}
           <h1 className="text-5xl uppercase font-bold">{event?.title}</h1>
           <div className="flex items-center space-x-2 mt-5">
             <div className="border border-white/50 rounded-lg w-12 flex-center px-3 py-2 ">
@@ -90,12 +94,32 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
               <p> Kota Bandung, Jawa Barat</p>
             </div>
           </div>
-          <Button
-            type="submit"
-            className="w-full text-black font-monument-regular text-xl my-2 "
-          >
-            Register Now
-          </Button>
+          {!isAttend ? (
+            <EventDialog user={user} event={event} />
+          ) : (
+            <div
+              className="flex items-center p-4 mb-4 text-sm  rounded-lg  bg-gray-800/20  text-primary"
+              role="alert"
+            >
+              <svg
+                className="flex-shrink-0 inline w-4 h-4 me-3"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+              </svg>
+              <span className="sr-only">Info</span>
+              <div>
+                <span className="font-bold">
+                  You Already Register this Event
+                </span>{" "}
+                Check your email
+              </div>
+            </div>
+          )}
+
           {event?.userId === user?.id && (
             <Link href={`/events/${event.url}/edit`} className="mt-5">
               <Button
@@ -118,6 +142,7 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
 
             <p className="opacity-50">Google Maps</p>
           </div>
+          
         </div>
       </section>
     </>

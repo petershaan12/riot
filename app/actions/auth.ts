@@ -109,6 +109,16 @@ const getUserByEmail = async (email: string) => {
   }
 };
 
+const getUserByUsername = async (username: string) => {
+  try {
+    const user = await db.user.findFirst({ where: { username } });
+    return user;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
 const getUserById = async (id: string) => {
   try {
     const user = await db.user.findUnique({ where: { id } });
@@ -147,4 +157,5 @@ export {
   getAccountByUserId,
   generateUsername,
   updateUsername,
+  getUserByUsername,
 };
