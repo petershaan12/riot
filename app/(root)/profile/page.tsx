@@ -7,6 +7,8 @@ import { getUserEvents } from "@/app/actions/events";
 import ProfileEventCard from "@/components/profile/profile-event-card";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { getUserAttendEvent, getUserRank } from "@/app/actions/user";
+import { Badge } from "@/components/ui/badge";
 
 const Page = async () => {
   const user = await currentUser();
@@ -14,8 +16,11 @@ const Page = async () => {
   if (user.username === null) {
     redirect("/auth/username");
   }
-
   const events = await getUserEvents(user.id);
+
+  const rankResponse = await getUserRank(user.id);
+  const getAttendEvent = await getUserAttendEvent(user.id);
+
   const getDate = user?.createdAt;
   const dateObject = new Date(getDate);
   const options: Intl.DateTimeFormatOptions = {
@@ -39,60 +44,78 @@ const Page = async () => {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col my-5 items-start">
-            <h1 className="text-3xl uppercase font-bold">{user?.name}</h1>
+            {user?.role === "ADMIN" || user?.role === "ORGANIZATION" ? (
+              <div className="flex space-x-3">
+                <h1 className="text-3xl uppercase font-bold">{user?.name}</h1>
+                <Image
+                  alt="centang_biru"
+                  src="/assets/icons/centangbiru.svg"
+                  width={20}
+                  height={20}
+                />
+              </div>
+            ) : (
+              <h1 className="text-3xl uppercase font-bold">{user?.name}</h1>
+            )}
             <p className="opacity-50">@{user?.username ?? "-"}</p>
             <p className="flex items-center opacity-50 ">
               <Calendar className="w-5 mr-2 " strokeWidth={2.5} />
               Joined on {formattedDate}
             </p>
-
             {user?.bio && <p className="my-2">{user.bio}</p>}
+            {user?.role === "USER" && (
+              <div className="flex mt-2 space-x-5">
+                <div className="flex">
+                  <Image
+                    src="/assets/icons/file.svg"
+                    width={15}
+                    height={15}
+                    alt="Pin Image"
+                  />
 
-            <div className="flex mt-2 space-x-5">
-              <div className="flex">
-                <Image
-                  src="/assets/icons/file.svg"
-                  width={15}
-                  height={15}
-                  alt="Pin Image"
-                />
+                  <p>
+                    <span className="font-bold mr-1 ml-2">
+                      {getAttendEvent.attend !== undefined
+                        ? getAttendEvent.attend
+                        : "N/A"}
+                    </span>
+                    <span className="opacity-50">Attend</span>
+                  </p>
+                </div>
+                <div className="flex">
+                  <Image
+                    src="/assets/icons/diagram.svg"
+                    width={15}
+                    height={15}
+                    alt="Pin Image"
+                  />
 
-                <p>
-                  {" "}
-                  <span className="font-bold mr-1 ml-2">5</span>{" "}
-                  <span className="opacity-50">Attend</span>
-                </p>
+                  <p>
+                    <span className="font-bold mr-1 ml-2">
+                      {rankResponse.rank !== undefined
+                        ? rankResponse.rank
+                        : "N/A"}
+                    </span>
+                    <span className="opacity-50">Rank</span>
+                  </p>
+                </div>
               </div>
-              <div className="flex">
-                <Image
-                  src="/assets/icons/diagram.svg"
-                  width={15}
-                  height={15}
-                  alt="Pin Image"
-                />
-
-                <p>
-                  {" "}
-                  <span className="font-bold mr-1 ml-2">5</span>{" "}
-                  <span className="opacity-50">Rank</span>
-                </p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
         <Link href="/profile/ubahProfile">
           <Settings className="w-4" />
         </Link>
       </section>
-      <section className="md:w-[700px]">
+      <section className="md:w-[700px] mb-12">
         <div>
           <Separator className="my-5" />
           {(user?.role === "ADMIN" || user?.role === "ORGANIZATION") && (
             <>
-              <div className="p-5">
+              <div>
                 <h2 className="uppercase font-bold text-3xl mb-5">Events</h2>
               </div>
-              <ProfileEventCard data={events?.data} />{" "}
+              <ProfileEventCard data={events?.data} />
             </>
           )}
         </div>

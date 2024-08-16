@@ -11,7 +11,7 @@ const NotFound = () => {
   return (
     <div className="flex h-screen flex-col ">
       <div className="css-gradient bg-custom-gradient"></div>
-      <Header />
+    <Header />
       <TidakDitemukan />
     </div>
   );

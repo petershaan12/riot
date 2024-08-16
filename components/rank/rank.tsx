@@ -8,6 +8,7 @@ type User = {
   image: string | null;
   name: string | null;
   username: string | null;
+  points: number;
 };
 
 type RankComponent = {
@@ -18,7 +19,7 @@ const Rank = ({ users }: RankComponent) => {
   const [visibleCount, setVisibleCount] = useState(5);
 
   const handleShowMore = () => {
-    setVisibleCount((prevCount) => prevCount + 3);
+    setVisibleCount((prevCount) => prevCount + 5);
   };
 
   const allUsersDisplayed = visibleCount >= users.length;
@@ -31,10 +32,9 @@ const Rank = ({ users }: RankComponent) => {
     return "opacity-100"; // Default to 100 if more than 5 items are visible
   };
 
-  console.log(users);
   return (
     <>
-      <ul className="space-y-4">
+      <ul className="space-y-2 mb-12">
         {users.slice(0, visibleCount).map((user, index) => (
           <li
             key={user.id}
@@ -51,7 +51,7 @@ const Rank = ({ users }: RankComponent) => {
                   </p>
                 </AvatarFallback>
               </Avatar>
-              <span className="text-lg font-semibold">
+              <span className="md:text-lg font-semibold">
                 {index + 1}.
                 <Link
                   href={`/profile/${user.username}`}
@@ -61,16 +61,16 @@ const Rank = ({ users }: RankComponent) => {
                 </Link>
               </span>
             </div>
-            <span className="text-lg">
+            <span className="md:text-lg text-sm flex justify-end">
               <span className="opacity-50">Total Score:</span>{" "}
-              <span className="font-bold">{user.score}</span>
+              <span className="font-bold ml-2">{user.points}</span>
             </span>
           </li>
         ))}
       </ul>
 
       {visibleCount < users.length && (
-        <div className="flex justify-center mt-5">
+        <div className="flex justify-center mt-5 mb-24">
           <button
             onClick={handleShowMore}
             className="bg-white/20 rounded-full text-white py-2 px-4 text-sm"

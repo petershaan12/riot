@@ -8,6 +8,7 @@ import ProfileEventCard from "@/components/profile/profile-event-card";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getUserByUsername } from "@/app/actions/auth";
+import { getUserAttendEvent, getUserRank } from "@/app/actions/user";
 
 type SearchParamsProps = {
   params: { username: string };
@@ -19,8 +20,11 @@ const Page = async ({ params: { username } }: SearchParamsProps) => {
   if (!user) {
     redirect("/404");
   }
-
   const events = await getUserEvents(user?.id);
+
+  const rankResponse = await getUserRank(user.id);
+  const getAttendEvent = await getUserAttendEvent(user.id);
+
   const getDate = user?.createdAt;
   const dateObject = new Date(getDate);
   const options: Intl.DateTimeFormatOptions = {
@@ -44,7 +48,19 @@ const Page = async ({ params: { username } }: SearchParamsProps) => {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col my-5 items-start">
-            <h1 className="text-3xl uppercase font-bold">{user?.name}</h1>
+            {user?.role === "ADMIN" || user?.role === "ORGANIZATION" ? (
+              <div className="flex space-x-3">
+                <h1 className="text-3xl uppercase font-bold">{user?.name}</h1>
+                <Image
+                  alt="centang_biru"
+                  src="/assets/icons/centangbiru.svg"
+                  width={20}
+                  height={20}
+                />
+              </div>
+            ) : (
+              <h1 className="text-3xl uppercase font-bold">{user?.name}</h1>
+            )}
             <p className="opacity-50">@{user?.username ?? "-"}</p>
             <p className="flex items-center opacity-50 ">
               <Calendar className="w-5 mr-2 " strokeWidth={2.5} />
@@ -53,36 +69,44 @@ const Page = async ({ params: { username } }: SearchParamsProps) => {
 
             {user?.bio && <p className="my-2">{user.bio}</p>}
 
-            <div className="flex mt-2 space-x-5">
-              <div className="flex">
-                <Image
-                  src="/assets/icons/file.svg"
-                  width={15}
-                  height={15}
-                  alt="Pin Image"
-                />
+            {user?.role === "USER" && (
+              <div className="flex mt-2 space-x-5">
+                <div className="flex">
+                  <Image
+                    src="/assets/icons/file.svg"
+                    width={15}
+                    height={15}
+                    alt="Pin Image"
+                  />
 
-                <p>
-                  {" "}
-                  <span className="font-bold mr-1 ml-2">5</span>{" "}
-                  <span className="opacity-50">Attend</span>
-                </p>
-              </div>
-              <div className="flex">
-                <Image
-                  src="/assets/icons/diagram.svg"
-                  width={15}
-                  height={15}
-                  alt="Pin Image"
-                />
+                  <p>
+                    <span className="font-bold mr-1 ml-2">
+                      {getAttendEvent.attend !== undefined
+                        ? getAttendEvent.attend
+                        : "N/A"}
+                    </span>
+                    <span className="opacity-50">Attend</span>
+                  </p>
+                </div>
+                <div className="flex">
+                  <Image
+                    src="/assets/icons/diagram.svg"
+                    width={15}
+                    height={15}
+                    alt="Pin Image"
+                  />
 
-                <p>
-                  {" "}
-                  <span className="font-bold mr-1 ml-2">5</span>{" "}
-                  <span className="opacity-50">Rank</span>
-                </p>
+                  <p>
+                    <span className="font-bold mr-1 ml-2">
+                      {rankResponse.rank !== undefined
+                        ? rankResponse.rank
+                        : "N/A"}
+                    </span>
+                    <span className="opacity-50">Rank</span>
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </section>

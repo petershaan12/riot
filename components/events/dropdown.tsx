@@ -37,13 +37,20 @@ type DropdownProps = {
 
 const Dropdown = ({ value, onFieldChange }: DropdownProps) => {
   const [categories, setCategories] = useState<ICategory[]>([]);
-  const [newCategory, setNewCategory] = useState("");
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategoryPoints, setNewCategoryPoints] = useState<number | null>(
+    null
+  );
 
   const handleAddCategory = async () => {
     const toastId = toast.loading("Add Category...");
 
     startTransition(() => {
-      createCategories(newCategory)
+      if (newCategoryPoints === null) {
+        toast.error("Points cannot be empty", { id: toastId });
+        return;
+      }
+      createCategories(newCategoryName, newCategoryPoints)
         .then((data) => {
           if (data.error) {
             toast.error(data.error, { id: toastId });
@@ -54,7 +61,8 @@ const Dropdown = ({ value, onFieldChange }: DropdownProps) => {
               ...prevCategories,
               { _id: data.id, name: data.name },
             ]);
-            setNewCategory("");
+            setNewCategoryName("");
+            setNewCategoryPoints(null);
             toast.success(data.success, {
               id: toastId,
             });
@@ -108,9 +116,16 @@ const Dropdown = ({ value, onFieldChange }: DropdownProps) => {
               <AlertDialogDescription>
                 <Input
                   type="text"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
                   placeholder="Category Name"
+                  className=" mt-3 bg-black text-white"
+                />
+                <Input
+                  type="number"
+                  value={newCategoryPoints !== null ? newCategoryPoints : ""}
+                  onChange={(e) => setNewCategoryPoints(Number(e.target.value))}
+                  placeholder="Points"
                   className=" mt-3 bg-black text-white"
                 />
               </AlertDialogDescription>

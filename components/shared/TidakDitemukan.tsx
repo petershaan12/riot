@@ -6,15 +6,18 @@ import { FaHome } from "react-icons/fa";
 const TidakDitemukan = () => {
   return (
     <section className="bg-contain md:py-10 flex justify-center ">
-      <div className="flex flex-col items-center justify-center text-center">
+      <div className="md:w-[800px] my-5 flex justify-center items-center flex-col">
         <Image
-          src="/animation/404.gif"
-          width={100}
-          height={20}
-          alt="not-found"
+          src="/assets/images/404.png"
+          objectFit="cover"
+          width={300}
+          height={300}
+          quality={100}
+          priority
+          alt="No Found"
         />
-        <h1 className="text-[130px] text-white font-monument-regular ">404</h1>
-        <p className=" w-[300px] text-center">
+        <p className="text-lg md:text-2xl font-medium">Not Found</p>
+        <p className="mt-2 text-[#848484] text-xs md:text-base">
           Looks like you discovered a page that doesn't exist or you don't have
           access to.
         </p>

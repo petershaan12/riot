@@ -4,10 +4,12 @@ const Page = () => {
       <section className="bg-contain p-5 md:py-10">
         <div className="flex flex-col items-center justify-center text-center gap-5">
           <div>
-            <h1 className="text-5xl uppercase font-bold">About</h1>
-            <p className="opacity-50">sekilas tentang kita</p>
+            <h1 className="text-2xl md:text-5xl uppercase font-bold">About</h1>
+            <p className="opacity-50 text-xs md:text-base">
+              sekilas tentang kita
+            </p>
           </div>
-          <div className="max-w-5xl text-justify">
+          <div className="md:max-w-5xl text-sm text-justify">
             <p className="my-4">
               Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry's standard dummy text

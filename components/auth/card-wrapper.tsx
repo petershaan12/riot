@@ -18,7 +18,7 @@ interface CardWrapperProps {
 
 export const CardWrapper = ({ children, showSocial }: CardWrapperProps) => {
   return (
-    <Card className="w-[400px] bg-[#393939]/20 rounded-2xl border border-white/20 py-5 shadow-lg ring-1 ring-black/5 isolate  text-white">
+    <Card className="md:w-[400px] bg-[#393939]/20 rounded-2xl border border-white/20 py-5 shadow-lg ring-1 ring-black/5 isolate  text-white">
       <CardHeader>
         <Link href="/">
           <Image

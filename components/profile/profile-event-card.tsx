@@ -4,6 +4,8 @@ import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
+import NoEvent from "../events/no-event";
+import EventImage from "../EventImage";
 
 type User = {
   name: string | null;
@@ -30,12 +32,11 @@ const ProfileEventCard = ({ data }: ProfileEventCardProps) => {
       <div key={event.id} className="cursor-pointer    mb-4 ">
         <Link href={`/events/${event.url}`}>
           <div key={event.id} className="flex items-center">
-            <Image
-              src={event.image}
-              width={150}
-              height={150}
-              alt={`Gambar ${event.title}`}
-              className=" rounded-sm md:rounded-2xl  object-cover w-[100px] h-[100px] md:w-[150px] md:h-[150px] "
+            <EventImage
+              imageUrl={event.image}
+              size={150}
+              title={event.title}
+              className="rounded-sm md:rounded-2xl mx-2 object-cover w-[100psx] h-[100px] md:w-[150px] md:h-[150px]"
             />
             <div className="items-start flex flex-col ml-5">
               <h1 className="md:text-xl font-semibold text-start leading-tight mt-2">
@@ -61,7 +62,9 @@ const ProfileEventCard = ({ data }: ProfileEventCardProps) => {
       </div>
     ))
   ) : (
-    <div>halo</div>
+    <div className="-mt-5">
+      <NoEvent title="No Event Made " />
+    </div>
   );
 };
 

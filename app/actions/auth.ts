@@ -104,7 +104,6 @@ const getUserByEmail = async (email: string) => {
     });
     return user;
   } catch (e) {
-    console.log(e);
     return null;
   }
 };
@@ -114,7 +113,6 @@ const getUserByUsername = async (username: string) => {
     const user = await db.user.findFirst({ where: { username } });
     return user;
   } catch (e) {
-    console.log(e);
     return null;
   }
 };

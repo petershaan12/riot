@@ -1,4 +1,4 @@
-import { getUrlEvent, getUserAttendEvent } from "@/app/actions/events";
+import { getUrlEvent, isUserAttendEvent } from "@/app/actions/events";
 import CopyLink from "@/components/events/copylink";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -10,6 +10,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import EventDialog from "@/components/events/event-dialog";
+import MapDisplay from "@/components/GoogleMaps";
+import EventImage from "@/components/EventImage";
 
 type SearchParamsProps = {
   params: { slug: string };
@@ -23,27 +25,28 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
   }
 
   const user = await currentUser();
-  const isAttend = await getUserAttendEvent(user?.id, event?.id);
-
- 
+  const isAttend = await isUserAttendEvent(user?.id, event?.id);
 
   return (
     <>
-      <section className="p-5 md:py-10 flex space-x-5 ">
+      <section className="p-5 md:pb-10 md:flex space-x-5 space-y-5">
         <div className="">
-          <div className="w-[250px]  ">
+          <div className="md:w-[250px] w-[200px] mx-auto my-5 ">
             <AspectRatio ratio={1 / 1} className="flex-center">
-              <Image
-                src={event?.image}
-                width={500}
-                height={500}
-                alt="Gambar Events"
-                className="rounded-2xl "
+              <EventImage
+                imageUrl={event?.image}
+                size={500}
+                title={event?.title}
+                className="rounded-2xl  "
               />
             </AspectRatio>
           </div>
-          <CopyLink />
-          <div className="flex items-center">
+          <div className="md:block flex items-center justify-center space-x-2 md:mb-0 mb-5 ">
+            <CopyLink />
+            <p className="text-xs opacity-50  md:hidden">Contact The Host</p>
+            <p className="text-xs opacity-50  md:hidden">Report Events</p>
+          </div>
+          <div className="flex items-center md:px-5">
             <Avatar className="cursor-pointer">
               <AvatarImage src={event.user.image || ""} />
               <AvatarFallback>
@@ -58,17 +61,21 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
             </div>
           </div>
           <Separator className="bg-white/50 my-5" />
-          <p className="text-xs opacity-50">Contact The Host</p>
-          <p className="text-xs opacity-50 mt-4">Report Events</p>
+          <p className="text-xs opacity-50 hidden md:block">Contact The Host</p>
+          <p className="text-xs opacity-50 mt-4 hidden md:block">
+            Report Events
+          </p>
         </div>
 
-        <div className="w-[600px]">
+        <div className="md:w-[600px]">
           {!user && (
             <Badge className="bg-[#70FF00]/20 my-2  hover:text-black py-1 px-4 mt-5">
               Youre Invites to join ✨
             </Badge>
           )}
-          <h1 className="text-5xl uppercase font-bold">{event?.title}</h1>
+          <h1 className="text-2xl md:text-5xl uppercase font-bold">
+            {event?.title}
+          </h1>
           <div className="flex items-center space-x-2 mt-5">
             <div className="border border-white/50 rounded-lg w-12 flex-center px-3 py-2 ">
               <h1 className=" text-2xl font-bold  text-white">
@@ -90,11 +97,30 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
               />
             </div>
             <div className="leading-5">
-              <p>Mercure Bandung Nexa Supratman</p>
-              <p> Kota Bandung, Jawa Barat</p>
+              <p>{event.buildingName}</p>
             </div>
           </div>
-          {!isAttend ? (
+
+          {event?.userId === user?.id ? (
+            <div>
+              <Link href={`/events/${event.url}/participant`}>
+                <Button
+                  type="submit"
+                  className="w-full mb-2  border border-primary text-black font-monument-regular text-xl "
+                >
+                  Participant Attendance
+                </Button>
+              </Link>
+              <Link href={`/events/${event.url}/edit`}>
+                <Button
+                  type="submit"
+                  className="w-full text-primary bg-transparent border border-primary hover:bg-transparent hover:text-primary  font-monument-regular text-xl "
+                >
+                  Edit This Event
+                </Button>
+              </Link>
+            </div>
+          ) : !isAttend ? (
             <EventDialog user={user} event={event} />
           ) : (
             <div
@@ -120,29 +146,13 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
             </div>
           )}
 
-          {event?.userId === user?.id && (
-            <Link href={`/events/${event.url}/edit`} className="mt-5">
-              <Button
-                type="submit"
-                className="w-full text-primary bg-transparent border border-primary  font-monument-regular text-xl "
-              >
-                Edit This Event
-              </Button>
-            </Link>
-          )}
-
           <div className="mt-10">
             <h4 className="py-2">Location Detail</h4>
             <Separator className="bg-white" />
-            <p className="my-5">
-              Mercure Bandung Nexa Supratman Jl. Supratman No.66 - 68, Cihaur
-              Geulis, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40122,
-              Indonesia
-            </p>
+            <p className="my-5">{event.location}</p>
 
-            <p className="opacity-50">Google Maps</p>
+            <MapDisplay address={event.location} />
           </div>
-          
         </div>
       </section>
     </>

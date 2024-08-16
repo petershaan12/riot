@@ -89,7 +89,7 @@ const getCategories = async () => {
   return categories;
 };
 
-const createCategories = async (name: string) => {
+const createCategories = async (name: string, points: number) => {
   const exisitingCategory = await getDuplicateCategories(name);
   if (exisitingCategory) {
     return { error: "Category already exist" };
@@ -102,6 +102,7 @@ const createCategories = async (name: string) => {
   const category = await db.category.create({
     data: {
       name,
+      points,
     },
   });
 

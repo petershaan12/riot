@@ -20,12 +20,11 @@
 }
 
 .bg-gradasi {
-  /* @media (min-width: 768px) {
-      background-size: 300px 300px;
-      background-image: url('/assets/images/background.png');
+  @media (max-width: 768px) {
+      background-image: url('/assets/images/background_mobile.png');
       background-repeat: no-repeat;
-      background-position: bottom right 1rem;
-  } */
+      background-size: cover;
+  }
   background-image: url('/assets/images/background.png');
   background-size: cover;
 }

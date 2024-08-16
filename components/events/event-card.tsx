@@ -27,26 +27,36 @@ import {
 import BadgeEvents from "./event-badge";
 import { format } from "date-fns";
 import { Separator } from "../ui/separator";
+import EventDialog from "./event-dialog";
+import NoEvent from "./no-event";
+import MapDisplay from "../GoogleMaps";
+import EventImage from "../EventImage";
+import { Button } from "../ui/button";
 
 type Category = {
   name: string | null;
 };
 
 type User = {
+  id: string | null;
   name: string | null;
   image: string | null;
   username: string | null;
 };
 
-interface Event extends Document {
+type Event = {
   id: string;
+  userId: string;
   user: User;
   date: Date;
   url: string;
   title: string;
   image: string;
   category: Category;
-}
+  isAttend: boolean;
+  buildingName: string;
+  location: string;
+};
 
 type EventCardProps = {
   data: Event[];
@@ -55,28 +65,35 @@ type EventCardProps = {
   page: number | string;
   totalPages?: number;
   className?: string;
+  user?: User;
 };
 
 const EventCard = ({
   data,
   emptyTitle,
   limit,
+  user,
   page,
   totalPages = 0,
   className,
 }: EventCardProps) => {
+  console.log(user);
+
   const [sheetState, setSheetState] = useState<{
     isOpen: boolean;
     event: Event | null;
+    user: User | null;
   }>({
     isOpen: false,
     event: null,
+    user: null,
   });
 
   const handleCardClick = (event: Event) => {
     setSheetState({
       isOpen: true,
       event,
+      user: user || null,
     });
   };
 
@@ -107,38 +124,31 @@ const EventCard = ({
                         </p>
                       </AvatarFallback>
                     </Avatar>
-                    <p className="font-light text-xs">
-                      By {event.user.name || ""}
-                    </p>
+                    <div className="font-light text-xs flex space-x-3">
+                      <p>By {event.user.username || ""} </p>
+                      <Image
+                        alt="centang_biru"
+                        src="/assets/icons/centangbiru.svg"
+                        width={15}
+                        height={15}
+                      />
+                    </div>
                   </div>
                   <Badge className="bg-[#352F20] text-[#ECCB56] cursor-pointer text-xs md:text-xs hover:text-black py-1 px-2 md:px-4 mt-4">
                     {event.category.name}
                   </Badge>
                 </div>
-                <Image
-                  src={event.image}
-                  width={150}
-                  height={150}
-                  alt={`Gambar ${event.title}`}
-                  className=" rounded-sm md:rounded-2xl mx-2 object-cover w-[100px] h-[100px] md:w-[150px] md:h-[150px] "
+                <EventImage
+                  imageUrl={event.image}
+                  size={150}
+                  title={event.title}
+                  className="rounded-sm md:rounded-2xl mx-2 object-cover w-[100psx] h-[100px] md:w-[150px] md:h-[150px]"
                 />
               </div>
             </div>
           ))
         ) : (
-          <p className="w-[800px] mt-5 flex-center flex-col">
-            <Image
-              src="/assets/images/no-event.png"
-              objectFit="cover"
-              width={280}
-              height={280}
-              quality={100}
-              priority
-              alt="No Events Found"
-            />
-            <p className="text-2xl font-medium">{emptyTitle}</p>
-            <p className="mt-2 text-[#848484]">Check back Later</p>
-          </p>
+          <NoEvent title={emptyTitle} />
         )}
       </div>
 
@@ -178,19 +188,18 @@ const EventCard = ({
             </div>
             <Separator className="bg-white/20" />
             <SheetHeader className="flex-center my-5">
-              <Image
-                src={sheetState.event.image}
-                width={300}
-                height={300}
-                alt={`Gambar ${sheetState.event.title}`}
-                className=" rounded-sm md:rounded-2xl mx-2 object-cover w-[300px] h-[300px] md:w-[300px] md:h-[300px] "
+              <EventImage
+                imageUrl={sheetState.event.image}
+                size={300}
+                title={sheetState.event.title}
+                className=" rounded-sm md:rounded-2xl mx-2 object-cover w-[100px] h-[100px] md:w-[300px] md:h-[300px] "
               />
             </SheetHeader>
-            <SheetTitle className="text-4xl px-5">
+            <SheetTitle className="md:text-4xl text-2xl px-5">
               {sheetState.event.title}
             </SheetTitle>
-            <SheetDescription className="p-5">
-              <div className="flex items-center space-x-2 mt-5">
+            <SheetDescription className="px-5 mt-2 ">
+              <div className="flex items-center space-x-2 mb-5">
                 <Avatar className="cursor-pointer w-8 h-8">
                   <AvatarImage src={sheetState.event.user.image || ""} />
                   <AvatarFallback>
@@ -199,11 +208,24 @@ const EventCard = ({
                     </p>
                   </AvatarFallback>
                 </Avatar>
-                <p className=" ">By {sheetState.event.user.name || ""}</p>
+                <Link
+                  href={`/profile/${sheetState.event.user.username}`}
+                  className="hover:underline text-white hover:text-primary"
+                >
+                  <div className=" flex space-x-3">
+                    <p>By {sheetState.event.user.username || ""} </p>
+                    <Image
+                      alt="centang_biru"
+                      src="/assets/icons/centangbiru.svg"
+                      width={15}
+                      height={15}
+                    />
+                  </div>
+                </Link>
               </div>
-              <div className="flex items-center space-x-2 mt-5">
+              <div className="flex items-center space-x-2 mt-2">
                 <div className="border border-white/50 rounded-lg w-12 flex-center px-3 py-2 ">
-                  <h1 className=" text-2xl font-bold  text-white">
+                  <h1 className="text-xl md:text-2xl font-bold  text-white">
                     {formatDateTime(sheetState.event.date).bigNumberDate}
                   </h1>
                 </div>
@@ -221,18 +243,64 @@ const EventCard = ({
                     alt="Pin Image"
                   />
                 </div>
-                <div className="leading-5">
-                  <p>Mercure Bandung Nexa Supratman</p>
-                  <p> Kota Bandung, Jawa Barat</p>
+                <div className="leading-5">{sheetState.event.buildingName}</div>
+              </div>
+
+              {sheetState.event.userId === sheetState.user?.id ? (
+                <div>
+                  <Link href={`/events/${sheetState.event.url}/participant`}>
+                    <Button
+                      type="submit"
+                      className="w-full mb-2 border border-primary text-black font-bold text-xl"
+                    >
+                      Participant Attendance
+                    </Button>
+                  </Link>
+                  <Link href={`/events/${sheetState.event.url}/edit`}>
+                    <Button
+                      type="submit"
+                      className="w-full text-primary bg-transparent border border-primary hover:bg-transparent hover:text-primary font-bold text-xl mb-5"
+                    >
+                      Edit This Event
+                    </Button>
+                  </Link>
                 </div>
-              </div>
-              <div className="leading-5">
-                <p>Mercure Bandung Nexa Supratman</p>
-                <p> Kota Bandung, Jawa Barat</p>
-              </div>
-              <div className="leading-5">
-                <p>Mercure Bandung Nexa Supratman</p>
-                <p> Kota Bandung, Jawa Barat</p>
+              ) : !sheetState.event.isAttend ? (
+                <EventDialog user={sheetState.user} event={sheetState.event} />
+              ) : (
+                <div
+                  className="flex items-center p-4 mb-4 text-sm rounded-lg bg-gray-800/20 text-primary"
+                  role="alert"
+                >
+                  <svg
+                    className="flex-shrink-0 inline w-4 h-4 me-3"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                  </svg>
+                  <span className="sr-only">Info</span>
+                  <div>
+                    <span className="font-bold">
+                      You Already Register this Event
+                    </span>{" "}
+                    Check your email
+                  </div>
+                </div>
+              )}
+              <div className="my-5">
+                <h1 className="font-medium text-base my-2 opacity-100 text-white">
+                  Location
+                </h1>
+                <Separator className="bg-white/80 my-2" />
+                <p className="text-white text-xl font-semibold my-1">
+                  {sheetState.event.buildingName}
+                </p>
+                <p>{sheetState.event.location}</p>
+
+                <MapDisplay address={sheetState.event.location} />
               </div>
             </SheetDescription>
           </SheetContent>

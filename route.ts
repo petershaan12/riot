@@ -4,7 +4,15 @@
  * @type {string[]}
  */
 
-export const publicRoutes = ["/", "/about", "/events", "/rank", "/events/*"];
+export const publicRoutes = [
+  "/",
+  "/about",
+  "/events",
+  "/rank",
+  "/events/*",
+  "/profile/*",
+  "/404",
+];
 
 /**
  * An Array of rotues that are arcesible to the authenticated user

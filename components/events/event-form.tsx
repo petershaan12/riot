@@ -17,7 +17,7 @@ import {
 import { FaLocationDot } from "react-icons/fa6";
 import { eventsFormSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { eventDefaultValues } from "@/constants";
 import { Input } from "@/components/ui/input";
 import Dropdown from "@/components/events/dropdown";
@@ -33,9 +33,17 @@ import { FaDollarSign } from "react-icons/fa";
 import { Checkbox } from "../ui/checkbox";
 import { createEvent, editEvent } from "@/app/actions/events";
 import { useRouter } from "next/navigation";
+import {
+  GoogleMap,
+  Marker,
+  StandaloneSearchBox,
+  useJsApiLoader,
+} from "@react-google-maps/api";
+import LocationSearch from "../LocationSearch";
 
 type Category = {
   name: string | null;
+  points: number | null;
 };
 
 type User = {
@@ -51,6 +59,7 @@ type Event = {
   url: string;
   title: string;
   image: string;
+  location: string;
   category: Category;
 };
 
@@ -70,6 +79,8 @@ export const EventForm = ({
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const [isPending, startTransition] = useTransition();
+  const [location, setLocation] = useState<string>(event?.location || "");
+
   const initialValues =
     event && type === "edit"
       ? {
@@ -85,6 +96,7 @@ export const EventForm = ({
     defaultValues: {
       ...initialValues,
       userId: userId,
+      location: event?.location || "",
     },
   });
 
@@ -95,11 +107,12 @@ export const EventForm = ({
     const toastId = toast.loading(
       type === "edit" ? "Updating event..." : "Creating event..."
     );
-    // console.log("categoryId", values.categoryId);
 
-    if (!eventId) {
-      router.back();
-      return;
+    if (type === "edit") {
+      if (!eventId) {
+        router.back();
+        return;
+      }
     }
 
     startTransition(() => {
@@ -209,20 +222,37 @@ export const EventForm = ({
             </div>
             <FormField
               control={form.control}
+              name="buildingName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Event Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      placeholder="Example: Trump Tower"
+                      className=" text-white rounded-md placeholder-white/10"
+                    />
+                  </FormControl>
+                  <FormDescription>Spesific place name</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="location"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Location</FormLabel>
                   <FormControl>
-                    <div className="flex justify-center items-center ">
-                      <FaLocationDot className="w-6 h-6 mx-2 opacity-70" />
-                      <Input
-                        {...field}
-                        disabled={isPending}
-                        placeholder="Event location or Online"
-                        className=" text-white rounded-md placeholder-white/10"
-                      />
-                    </div>
+                    <LocationSearch
+                      location={location as string}
+                      onLocationChange={(newLocation) => {
+                        setLocation(newLocation);
+                        form.setValue("location", newLocation);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -273,6 +303,9 @@ export const EventForm = ({
                     </div>
                   </FormControl>
                   <FormMessage />
+                  <FormDescription>
+                    For now we only support Free Ticket
+                  </FormDescription>
                 </FormItem>
               )}
             />

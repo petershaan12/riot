@@ -19,7 +19,7 @@ const CopyLink = () => {
   return (
     <>
       <Badge
-        className="bg-white/20 cursor-pointer hover:text-black py-1 px-4 mt-5"
+        className=" bg-white/20 cursor-pointer hover:text-black py-1 md:mt-5"
         onClick={handleCopyLink}
       >
         Copy Link

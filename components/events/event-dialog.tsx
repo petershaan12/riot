@@ -20,7 +20,7 @@ const EventDialog = ({ user, event }: any) => {
     <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger
         onClick={() => handleOpenChange(true)}
-        className="w-full text-black bg-primary py-2 rounded-md font-monument-regular text-xl my-2 "
+        className="md:w-full text-black px-3 bg-primary py-2 rounded-md font-bold md:text-xl my-2 mb-4 "
       >
         Register Now
       </DialogTrigger>

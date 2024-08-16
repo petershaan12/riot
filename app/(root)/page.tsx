@@ -1,9 +1,14 @@
 import Image from "next/image";
-import { getAllEvents } from "../actions/events";
+import { getAllEvents, getManyUserAttendance } from "../actions/events";
 import EventCard from "@/components/events/event-card";
+import { currentUser } from "@/lib/utils";
 
 export default async function Home() {
   const events = await getAllEvents({ limit: 3 });
+  const user = await currentUser();
+
+  const eventsWithAttendance =
+    (await getManyUserAttendance(user?.id, events?.data)) ?? [];
 
   return (
     <>
@@ -28,14 +33,20 @@ export default async function Home() {
         className="wrapper my-8 flex flex-col items-center gap-8 md:gap-12"
       >
         <div className="mx-auto">
-          <h2 className="uppercase font-monument-bold text-4xl ">Events</h2>
-          <p className="text-center"> Latest Events</p>
+          <h2 className="uppercase font-monument-bold text-xl md:text-4xl ">
+            Events
+          </h2>
+          <p className="text-center text-xs md:text-lg opacity-50">
+            {" "}
+            Latest Events
+          </p>
         </div>
         <EventCard
-          data={events?.data}
+          data={eventsWithAttendance}
           emptyTitle="No Events Found"
           limit={5}
           page={0}
+          user={user}
           totalPages={events?.totalPages}
         />
       </section>

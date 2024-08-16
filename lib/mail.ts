@@ -1,7 +1,6 @@
 import nodemailer from "nodemailer";
 import { attendTemplate } from "./email/attend";
 import handlebars from "handlebars";
-import { welcomeTemplate } from "./email/welcome";
 
 export async function sendMail({
   to,
@@ -44,9 +43,13 @@ export async function sendMail({
   }
 }
 
-export function compileAttendTemplate(name: string, url: string) {
-  const template = handlebars.compile(welcomeTemplate);
-  const htmlBody = template({ name, url });
+export function compileAttendTemplate(
+  name: string,
+  judul: string,
+  tautan: string
+) {
+  const template = handlebars.compile(attendTemplate);
+  const htmlBody = template({ name, judul, tautan });
 
   return htmlBody;
 }

@@ -138,7 +138,7 @@ export const UbahProfileForm = () => {
         onClick={() => router.push("/profile")}
       />
       <div className="flex flex-col items-center  w-full text-center gap-5 ">
-        <Avatar className="cursor-pointer md:w-[200px] md:h-[200px]">
+        <Avatar className="cursor-pointer w-[200px] h-[200px]">
           <AvatarImage src={previewImage || user?.image} alt="Profile Image" />
           <AvatarFallback>
             <p className="text-4xl font-bold uppercase">
@@ -287,7 +287,7 @@ export const UbahProfileForm = () => {
                   />
                 </>
               )}
-        </div>
+            </div>
             <FormError message={error} />
             <FormSuccess message={success} />
             <Separator className="border border-white mt-5 mx-auto" />

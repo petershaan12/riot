@@ -37,6 +37,7 @@ const EventSubmit = ({
   onClose: () => void;
 }) => {
   const router = useRouter();
+
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -46,8 +47,6 @@ const EventSubmit = ({
       phone: "",
     },
   });
-  const eventId = event.id;
-  const eventUrl = event.url;
 
   const onSubmit = async (values: z.infer<typeof EventAttendeeSchema>) => {
     setError("");
@@ -56,7 +55,7 @@ const EventSubmit = ({
     console.log(values.phone);
 
     startTransition(() => {
-      attendEvent(eventId, eventUrl, user, values)
+      attendEvent(event, user, values)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -80,9 +79,9 @@ const EventSubmit = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <DialogHeader>
-          <DialogTitle>Your Info</DialogTitle>
+          <DialogTitle className="text-start">Your Info</DialogTitle>
           <DialogDescription>
-            <div className="flex text-white items-center">
+            <div className="flex text-white items-center text-start">
               <Avatar className="cursor-pointer">
                 <AvatarImage src={user.image || ""} />
                 <AvatarFallback>

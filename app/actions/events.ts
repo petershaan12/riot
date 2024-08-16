@@ -49,12 +49,13 @@ const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
     }
   }
 
-  await db.events.create({
+  await db.event.create({
     data: {
       title: values.title,
       image: values.imageUrl,
       url: values.url,
       description: values.description,
+      buildingName: values.buildingName,
       price: values.price,
       location: values.location,
       isFree: values.isFree,
@@ -71,7 +72,7 @@ const editEvent = async (values: z.infer<typeof eventsFormSchema>) => {
     return { error: "Unauthorized" };
   }
 
-  const existingEvent = await db.events.findUnique({
+  const existingEvent = await db.event.findUnique({
     where: { url: values.url },
   });
 
@@ -112,11 +113,12 @@ const editEvent = async (values: z.infer<typeof eventsFormSchema>) => {
     }
   }
 
-  await db.events.update({
+  await db.event.update({
     where: { url: values.url },
     data: {
       title: values.title,
       image: values.imageUrl,
+      buildingName: values.buildingName,
       description: values.description,
       price: values.price,
       location: values.location,
@@ -130,8 +132,7 @@ const editEvent = async (values: z.infer<typeof eventsFormSchema>) => {
 };
 
 const attendEvent = async (
-  eventId: string,
-  eventUrl: string,
+  event: any,
   user: any,
   values: z.infer<typeof EventAttendeeSchema>
 ) => {
@@ -139,25 +140,26 @@ const attendEvent = async (
     return { error: "Unauthorized" };
   }
 
-  const existingEvent = await db.events.findUnique({
-    where: { url: eventUrl },
+  const existingEvent = await db.event.findUnique({
+    where: { url: event.url },
   });
 
   if (!existingEvent) {
     return { error: "Event not found" };
   }
 
-  const existingAttendee = await getUserAttendEvent(user.id, eventId);
+  const existingAttendee = await isUserAttendEvent(user.id, event.id);
 
   if (existingAttendee) {
     return { error: "You already attend this event" };
   }
 
-  await db.eventAttendees.create({
+  await db.attendance.create({
     data: {
-      eventId: eventId,
+      eventId: event.id,
       userId: user.id,
       phone: values.phone,
+      points: event.category.points,
     },
   });
 
@@ -167,7 +169,7 @@ const attendEvent = async (
         to: user.email,
         name: user.name,
         subject: "Invitation to attend event",
-        body: compileAttendTemplate(user.name, eventUrl),
+        body: compileAttendTemplate(user.name, event.title, event.url),
       });
     } catch (error) {
       return { error: "Attend Event success but failed to send email" };
@@ -177,9 +179,10 @@ const attendEvent = async (
   return { success: "Attend Event success, please check your email" };
 };
 
-const getUserAttendEvent = async (userId: string, eventId: string) => {
+const isUserAttendEvent = async (userId: string, eventId: string) => {
   try {
-    const attend = await db.eventAttendees.findFirst({
+    if (!userId) return null;
+    const attend = await db.attendance.findFirst({
       where: {
         userId,
         eventId,
@@ -191,9 +194,26 @@ const getUserAttendEvent = async (userId: string, eventId: string) => {
   }
 };
 
+const getManyUserAttendance = async (userId: string, events: any[]) => {
+  try {
+    if (!userId) return events.map((event) => ({ ...event, isAttend: false }));
+
+    const eventsWithAttendance = await Promise.all(
+      events.map(async (event) => {
+        const isAttend = !!(await isUserAttendEvent(userId, event.id));
+        return { ...event, isAttend };
+      })
+    );
+
+    return eventsWithAttendance;
+  } catch (e) {
+    handleError(e);
+  }
+};
+
 const getUrlEvent = async (url: string) => {
   try {
-    const event = await db.events.findUnique({
+    const event = await db.event.findUnique({
       where: {
         url,
       },
@@ -201,6 +221,7 @@ const getUrlEvent = async (url: string) => {
         category: {
           select: {
             name: true,
+            points: true,
           },
         },
         user: {
@@ -233,7 +254,7 @@ const getAllEvents = async ({ filter = "", limit = 5, page = 1 }) => {
     // Hitung offset berdasarkan halaman yang diminta
     const offset = (page - 1) * limit;
 
-    const events = await db.events.findMany({
+    const events = await db.event.findMany({
       where: filterOptions,
       orderBy: {
         createdAt: "desc",
@@ -246,6 +267,7 @@ const getAllEvents = async ({ filter = "", limit = 5, page = 1 }) => {
         },
         user: {
           select: {
+            id:true,
             image: true,
             username: true,
             name: true,
@@ -255,7 +277,7 @@ const getAllEvents = async ({ filter = "", limit = 5, page = 1 }) => {
       take: limit, // Batasi jumlah event yang diambil
       skip: offset, // Lewati event berdasarkan offset
     });
-    const totalEvents = await db.events.count();
+    const totalEvents = await db.event.count();
     return {
       data: JSON.parse(JSON.stringify(events)),
       totalPages: Math.ceil(totalEvents / limit),
@@ -267,7 +289,7 @@ const getAllEvents = async ({ filter = "", limit = 5, page = 1 }) => {
 
 const getUserEvents = async (userId: string) => {
   try {
-    const events = await db.events.findMany({
+    const events = await db.event.findMany({
       where: {
         userId,
       },
@@ -297,6 +319,30 @@ const getUserEvents = async (userId: string) => {
   }
 };
 
+const getParticipant = async (eventId: string) => {
+  try {
+    const attendees = await db.attendance.findMany({
+      where: {
+        eventId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            username: true,
+            points: true,
+          },
+        },
+      },
+    });
+    return attendees;
+  } catch (e) {
+    handleError(e);
+  }
+};
+
 export {
   createEvent,
   editEvent,
@@ -304,5 +350,7 @@ export {
   getAllEvents,
   getUserEvents,
   attendEvent,
-  getUserAttendEvent,
+  isUserAttendEvent,
+  getManyUserAttendance,
+  getParticipant,
 };
