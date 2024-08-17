@@ -12,9 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
-import { Check, CheckCheck, Trash } from "lucide-react";
-import AttendButton from "@/components/events/attend-button";
-import { updatePointUser } from "@/app/actions/user";
+import AttendButton from "@/components/events/participant/attend-button";
+import DeleteButton from "@/components/events/participant/delete-button";
 import { redirect } from "next/navigation";
 
 type ParticipantEventSlug = {
@@ -28,7 +27,7 @@ const Page = async ({ params: { slug } }: ParticipantEventSlug) => {
   if (!user) {
     redirect("/auth/login");
   }
-  
+
   if (!event) {
     return <TidakDitemukan />;
   }
@@ -81,13 +80,16 @@ const Page = async ({ params: { slug } }: ParticipantEventSlug) => {
                 <TableCell>{p.user.email}</TableCell>
                 <TableCell className="text-right flex justify-end">
                   <AttendButton
+                    attendanceId={p.id}
                     userId={p.user.id}
                     userPoints={p.user.points}
                     points={p.points}
                   />
-                  <button className="bg-red-500 px-3 rounded-md py-2 flex items-center space-x-2">
-                    <Trash className="w-4 mr-1" /> Delete
-                  </button>
+                  <DeleteButton
+                    attendanceId={p.id}
+                    userId={p.user.id}
+                    title={p.event.title}
+                  />
                 </TableCell>
               </TableRow>
             ))}

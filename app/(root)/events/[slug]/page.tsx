@@ -106,7 +106,7 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
               <Link href={`/events/${event.url}/participant`}>
                 <Button
                   type="submit"
-                  className="w-full mb-2  border border-primary text-black font-monument-regular text-xl "
+                  className="w-full mb-2  border border-primary text-black font-bold text-xl "
                 >
                   Participant Attendance
                 </Button>
@@ -114,7 +114,7 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
               <Link href={`/events/${event.url}/edit`}>
                 <Button
                   type="submit"
-                  className="w-full text-primary bg-transparent border border-primary hover:bg-transparent hover:text-primary  font-monument-regular text-xl "
+                  className="w-full text-primary bg-transparent border border-primary hover:bg-transparent hover:text-primary  font-bold text-xl "
                 >
                   Edit This Event
                 </Button>

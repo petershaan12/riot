@@ -3,12 +3,12 @@ import { FcGoogle } from "react-icons/fc";
 import { Button } from "../ui/button";
 import { FaGithub } from "react-icons/fa";
 import { signIn } from "next-auth/react";
-import { DEFAULT_USERNAME_REDIRECT } from "@/route";
+import { DEFAULT_LOGIN_REDIRECT } from "@/route";
 
 export const Social = () => {
   const onClick = (provider: "google" | "github") => {
     signIn(provider, {
-      callbackUrl: DEFAULT_USERNAME_REDIRECT,
+      callbackUrl: DEFAULT_LOGIN_REDIRECT,
     });
   };
   return (

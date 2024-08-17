@@ -263,11 +263,12 @@ const getAllEvents = async ({ filter = "", limit = 5, page = 1 }) => {
         category: {
           select: {
             name: true,
+            points: true,
           },
         },
         user: {
           select: {
-            id:true,
+            id: true,
             image: true,
             username: true,
             name: true,
@@ -300,6 +301,7 @@ const getUserEvents = async (userId: string) => {
         category: {
           select: {
             name: true,
+            points: true,
           },
         },
         user: {
@@ -333,6 +335,11 @@ const getParticipant = async (eventId: string) => {
             email: true,
             username: true,
             points: true,
+          },
+        },
+        event: {
+          select: {
+            title: true,
           },
         },
       },

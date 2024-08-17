@@ -7,6 +7,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
@@ -36,8 +37,6 @@ const EventSubmit = ({
   event: any;
   onClose: () => void;
 }) => {
-  const router = useRouter();
-
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -48,11 +47,13 @@ const EventSubmit = ({
     },
   });
 
+  console.log(event);
+
   const onSubmit = async (values: z.infer<typeof EventAttendeeSchema>) => {
     setError("");
     setSuccess("");
     const toastId = toast.loading("Register in");
-    console.log(values.phone);
+    // console.log(values.phone);
 
     startTransition(() => {
       attendEvent(event, user, values)
@@ -114,6 +115,9 @@ const EventSubmit = ({
                   />
                 </FormControl>
                 <FormMessage />
+                <FormDescription>
+                  Make sure your phone number is correct
+                </FormDescription>
               </FormItem>
             )}
           />

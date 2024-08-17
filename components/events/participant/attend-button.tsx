@@ -1,25 +1,30 @@
 "use client";
 
-import { updatePointUser } from "@/app/actions/user";
+import { editUserAttend } from "@/app/actions/user";
 import { Check } from "lucide-react";
 import { startTransition, useState } from "react";
 import { toast } from "sonner";
 
 type AttendButtonProps = {
   userId: string;
+  attendanceId: string;
   userPoints: number;
   points: number;
+  isAttend?: boolean;
 };
 
-const AttendButton = ({ userId, userPoints, points }: AttendButtonProps) => {
-  const [hasAttended, setHasAttended] = useState(false);
-
+const AttendButton = ({
+  userId,
+  attendanceId,
+  userPoints,
+  points,
+}: AttendButtonProps) => {
   const handleAttend = async () => {
     const newPoints = userPoints + points;
     const toastId = toast.loading("Processing...");
 
     startTransition(() => {
-      updatePointUser(userId, newPoints)
+      editUserAttend(userId, newPoints, attendanceId)
         .then((data) => {
           if (data.error) {
             toast.error(data.error, { id: toastId });
@@ -29,7 +34,6 @@ const AttendButton = ({ userId, userPoints, points }: AttendButtonProps) => {
             toast.success(data.success, {
               id: toastId,
             });
-            setHasAttended(true);
           }
         })
         .catch(() => {
@@ -40,11 +44,8 @@ const AttendButton = ({ userId, userPoints, points }: AttendButtonProps) => {
 
   return (
     <button
-      className={`px-3 rounded-md py-2 mr-2 flex items-center space-x-2 ${
-        hasAttended ? "bg-gray-500 cursor-not-allowed" : "bg-green-500"
-      }`}
+      className={`px-3 rounded-md py-2 mr-2 flex items-center space-x-2 bg-green-500`}
       onClick={() => handleAttend()}
-      disabled={hasAttended}
     >
       <Check className="w-4 mr-1" /> Attend
     </button>

@@ -13,9 +13,13 @@ import { Badge } from "@/components/ui/badge";
 const Page = async () => {
   const user = await currentUser();
 
+  if (!user) {
+    redirect("/auth/login");
+  }
   if (user.username === null) {
     redirect("/auth/username");
   }
+  
   const events = await getUserEvents(user.id);
 
   const rankResponse = await getUserRank(user.id);

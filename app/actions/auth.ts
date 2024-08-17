@@ -42,8 +42,6 @@ const login = async (values: z.infer<typeof LoginSchema>) => {
 };
 
 const register = async (values: z.infer<typeof RegisterSchema>) => {
-  const username = await generateUsername(values.name as string);
-
   if (!values.email || !values.password || !values.name) {
     return { error: "Please provide all fields" };
   }
@@ -59,7 +57,6 @@ const register = async (values: z.infer<typeof RegisterSchema>) => {
     data: {
       ...values,
       password: hashedPassword,
-      username,
     },
   });
   return { success: "Register success" };

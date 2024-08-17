@@ -17,7 +17,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { profilDefaultValues } from "@/constants";
-import { useCurrentUser } from "@/hooks/use-current-user";
 import { SettingSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator } from "@radix-ui/react-separator";
@@ -29,8 +28,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-export const UbahProfileForm = () => {
-  const { user, isLoading } = useCurrentUser();
+export const UbahProfileForm = ({ user }: any) => {
   const [error, setError] = useState<string | undefined>();
   const [errorImage, setErrorImage] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
@@ -80,7 +78,6 @@ export const UbahProfileForm = () => {
           reader.onloadend = () => {
             const base64String = reader.result as string;
             setPreviewImage(base64String);
-            // Update form state with base64 image
             form.setValue("image", base64String);
           };
           reader.readAsDataURL(file);
@@ -126,7 +123,7 @@ export const UbahProfileForm = () => {
     });
   };
 
-  if (isLoading) {
+  if (!user) {
     return <Loading />;
   }
 
@@ -252,7 +249,7 @@ export const UbahProfileForm = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Passwword</FormLabel>
+                        <FormLabel>Password</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -271,7 +268,7 @@ export const UbahProfileForm = () => {
                     name="newPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>New Passwword</FormLabel>
+                        <FormLabel>New Password</FormLabel>
                         <FormControl>
                           <Input
                             {...field}

@@ -1,6 +1,6 @@
 import EventCard from "@/components/events/event-card";
 import { Calendar } from "@/components/ui/calendar";
-import { getAllEvents } from "@/app/actions/events";
+import { getAllEvents, getManyUserAttendance } from "@/app/actions/events";
 import TidakDitemukan from "@/components/shared/TidakDitemukan";
 import Category from "@/components/events/category";
 import { currentUser } from "@/lib/utils";
@@ -15,6 +15,9 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
   const user = await currentUser();
   const events = await getAllEvents({ filter, limit: 5, page });
 
+  const eventsWithAttendance =
+    (await getManyUserAttendance(user?.id, events?.data)) ?? [];
+
   return (
     <>
       <section className="bg-contain p-5 md:py-10">
@@ -26,7 +29,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
           <div className="md:flex mt-5">
             <section id="eventCard" className="space-y-5 ">
               <EventCard
-                data={events?.data}
+                data={eventsWithAttendance}
                 emptyTitle="No Events Found"
                 limit={5}
                 page={page}
