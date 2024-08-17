@@ -36,6 +36,7 @@ model User {
   accounts      Account[]
   events        Event[]     @relation("UserEvents")
   attendances   Attendance[]
+  tickets       Ticket[]
 
   @@index([points], name: "idx_user_points") // Index untuk mengurutkan user berdasarkan poin
 }
@@ -109,6 +110,7 @@ model Event {
   updatedAt   DateTime    @updatedAt
   user        User        @relation("UserEvents", fields: [userId], references: [id])
   attendances Attendance[]
+  tickets     Ticket[]
 
   @@unique([title, date])
 }
@@ -122,9 +124,25 @@ model Attendance {
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
   points    Int             // Poin yang didapatkan dari kehadiran di event ini
+  ticketId  String           @db.ObjectId
 
+  ticket    Ticket           @relation(fields: [ticketId], references: [id])
   event     Event            @relation(fields: [eventId], references: [id])
   user      User             @relation(fields: [userId], references: [id])
 
+  @@unique([eventId, userId])
+}
+
+model Ticket {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  eventId   String   @db.ObjectId
+  userId    String   @db.ObjectId
+  qrCodeImage String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+  attendance Attendance[]
   @@unique([eventId, userId])
 }

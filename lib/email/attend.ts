@@ -23,15 +23,29 @@ export const attendTemplate = `
             line-height: 1.5;
         }
         .button {
-            background-color: #cbff37;
-            color: #000000;
+            background-color: #000;
+            color: #fff;
             font-weight: bold;
             padding: 10px 20px;
             cursor: pointer;
             border: none;
-            border-radius: 20px;
-            width: 40%;
+            border-radius: 5px;
+            width: 150px;
             margin-top: 10px;
+            text-decoration: none;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .button2 {
+            background-color: #f4f5f6;
+            color: #000;
+            font-weight: bold;
+            padding: 10px 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            width: 150px;
             text-decoration: none;
             display: inline-block;
             text-decoration: none;
@@ -59,11 +73,14 @@ export const attendTemplate = `
 <body>
     <div class="container">
         <img src="https://raw.githubusercontent.com/petershaan12/riot/2b0c9b6c9745efc08f512d5b37efcd05b2f9e56b/public/assets/images/riot_white.png" alt="Riot Logo" height="150" width="150" />
-        <p class="text">Terima kasih <strong> {{name}}</strong>,</p>
+        <p class="text">Thank You <strong> {{name}}</strong>,</p>
         <p class="text">Anda telah berhasil mendaftar di event <strong>{{judul}}</strong>.</p>
         <p class="text">Silahkan join grup WhatsApp dengan klik tombol di bawah ini untuk informasi lebih lanjut:</p>
-        <a href="{{ tautan }}" class="button" style="color: #000000;">Masuk Grup WA</a>
-        <p class="footer-text">Email ini dibuat otomatis. Mohon tidak mengirimkan balasan ke email ini. Jika membutuhkan bantuan, silahkan hubungi <a href="https://riot.com/kontak" target="_blank" style="text-decoration: underline; color: #cbff37;">Kontak Kami</a>.</p>
+        <div>
+            <a href="{{ tautan }}" class="button" style="color: #fff;">Event Details</a>
+            <a href="{{ ticketId }}" class="button2" style="color: #4a4b4b;">My Ticket</a>
+        </div>
+        <p class="footer-text">Email ini dibuat otomatis. Mohon tidak mengirimkan balasan ke email ini. Jika membutuhkan bantuan, silahkan hubungi <a href="https://riot.com/kontak" target="_blank" style="text-decoration: underline; color: #000;">Kontak Kami</a>.</p>
         <p class="footer-text">Ikuti kami di:</p>
         <div class="social-icons" style="margin: 10px 0;">
             

@@ -47,10 +47,21 @@ export async function sendMail({
 export function compileAttendTemplate(
   name: string,
   judul: string,
-  tautan: string
+  tautan: string,
+  ticketId: string
 ) {
+  const baseUrlEvent = "http://localhost:3000/events/";
+  const baseUrlTicket = "http://localhost:3000/ticket/";
+  const fullTautan = `${baseUrlEvent}${tautan}`;
+  const fullTicketId = `${baseUrlTicket}${ticketId}`;
   const template = handlebars.compile(attendTemplate);
-  const htmlBody = template({ name, judul, tautan });
+
+  const htmlBody = template({
+    name,
+    judul,
+    tautan: fullTautan,
+    ticketId: fullTicketId,
+  });
 
   return htmlBody;
 }

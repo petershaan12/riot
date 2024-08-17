@@ -6,6 +6,7 @@ import path from "path";
 import fs from "fs/promises";
 import { handleError } from "@/lib/utils";
 import { compileAttendTemplate, sendMail } from "@/lib/mail";
+import { generateTicketBarcode } from "./barcode";
 
 const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
   if (!values.userId) {
@@ -154,12 +155,15 @@ const attendEvent = async (
     return { error: "You already attend this event" };
   }
 
-  await db.attendance.create({
+  const ticket = await generateTicketBarcode(user.id, event.id);
+
+  const attendance = await db.attendance.create({
     data: {
       eventId: event.id,
       userId: user.id,
       phone: values.phone,
       points: event.category.points,
+      ticketId: ticket,
     },
   });
 
@@ -169,14 +173,17 @@ const attendEvent = async (
         to: user.email,
         name: user.name,
         subject: "Invitation to attend event",
-        body: compileAttendTemplate(user.name, event.title, event.url),
+        body: compileAttendTemplate(user.name, event.title, event.url, ticket),
       });
     } catch (error) {
       return { error: "Attend Event success but failed to send email" };
     }
   }
 
-  return { success: "Attend Event success, please check your email" };
+  return {
+    success: "Attend Event success, please check your email",
+    ticketId: attendance.ticketId,
+  };
 };
 
 const isUserAttendEvent = async (userId: string, eventId: string) => {

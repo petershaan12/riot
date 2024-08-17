@@ -67,6 +67,8 @@ const EventSubmit = ({
               id: toastId,
             });
             onClose();
+
+            window.open(`/ticket/${data.ticketId}`, "_blank");
           }
         })
         .catch((error) => {
