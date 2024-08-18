@@ -82,8 +82,8 @@ const Page = async ({ params: { slug } }: ParticipantEventSlug) => {
                   <AttendButton
                     attendanceId={p.id}
                     userId={p.user.id}
-                    userPoints={p.user.points}
                     points={p.points}
+                    isAttend={p.status}
                   />
                   <DeleteButton
                     attendanceId={p.id}

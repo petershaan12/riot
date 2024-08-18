@@ -39,7 +39,7 @@ const DeleteButton = ({ attendanceId, userId, title }: AttendButtonProps) => {
 
   return (
     <button
-      className={`px-3 rounded-md py-2 mr-2 flex items-center space-x-2 ${
+      className={`px-3 rounded-md py-2 mr-2 flex items-center space-x-2 text-xs ${
         hasAttended ? "bg-gray-500 cursor-not-allowed" : "bg-red-500"
       }`}
       onClick={() => handleAttend()}

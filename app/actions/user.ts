@@ -20,7 +20,7 @@ const getAllUser = async () => {
         },
       },
       orderBy: {
-        points: "asc",
+        points: "desc",
       },
     });
     return users;
@@ -70,6 +70,68 @@ const getUserRank = async (userId: string) => {
   }
 };
 
+const scanUserAttend = async (
+  userId: string,
+  points: number,
+  eventId: string
+) => {
+  try {
+    const user = await db.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      return { error: "User not found" };
+    }
+
+    if (!points) {
+      return { error: "Points for this event is missing" };
+    }
+
+    //check if status already present
+    const attendance = await db.attendance.findFirst({
+      where: {
+        eventId,
+        userId,
+      },
+    });
+
+    if (!attendance) {
+      return { error: "User not registered for this event" };
+    }
+
+    if (attendance?.status === "ATTENDED") {
+      return { error: "User already attended this event" };
+    }
+
+    // Update attendace {
+    await db.attendance.update({
+      where: {
+        id: attendance.id,
+      },
+      data: {
+        status: "ATTENDED",
+      },
+    });
+    // Update the user's points
+    await db.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        points: user.points + points,
+      },
+    });
+
+    return { success: "User attend " };
+  } catch (error) {
+    handleError(error);
+    return { error: "Failed to attend user" };
+  }
+};
+
 const editUserAttend = async (
   userId: string,
   points: number,
@@ -101,7 +163,7 @@ const editUserAttend = async (
       return { error: "Attendance not found" };
     }
 
-    if (attendance.status === "PRESENT") {
+    if (attendance.status === "ATTENDED") {
       return { error: "User already attended this event" };
     }
 
@@ -111,7 +173,7 @@ const editUserAttend = async (
         id: attendanceId,
       },
       data: {
-        status: "PRESENT",
+        status: "ATTENDED",
       },
     });
 
@@ -121,14 +183,14 @@ const editUserAttend = async (
         id: userId,
       },
       data: {
-        points,
+        points: user.points + points,
       },
     });
 
-    return { success: "User points updated successfully" };
+    return { success: "User attend" };
   } catch (error) {
     handleError(error);
-    return { error: "Failed to update user points" };
+    return { error: "Failed to attend user " };
   }
 };
 
@@ -180,4 +242,5 @@ export {
   editUserAttend,
   getUserAttendEvent,
   deleteUserAttend,
+  scanUserAttend,
 };

@@ -6,7 +6,7 @@ import path from "path";
 import fs from "fs/promises";
 import { handleError } from "@/lib/utils";
 import { compileAttendTemplate, sendMail } from "@/lib/mail";
-import { generateTicketBarcode } from "./barcode";
+import { generateTicketBarcode } from "./qrcode";
 
 const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
   if (!values.userId) {
@@ -176,12 +176,12 @@ const attendEvent = async (
         body: compileAttendTemplate(user.name, event.title, event.url, ticket),
       });
     } catch (error) {
-      return { error: "Attend Event success but failed to send email" };
+      return { error: "Event registered success but failed to send email" };
     }
   }
 
   return {
-    success: "Attend Event success, please check your email",
+    success: "Event registered success, please check your email",
     ticketId: attendance.ticketId,
   };
 };

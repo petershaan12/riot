@@ -11,6 +11,7 @@ export const publicRoutes = [
   "/rank",
   "/events/*",
   "/profile/*",
+  "/ticket/*",
   "/404",
 ];
 

@@ -1,4 +1,4 @@
-import { getTicketQRCode } from "@/app/actions/barcode";
+import { getTicketQRCode } from "@/app/actions/qrcode";
 import { CardWrapper } from "@/components/auth/card-wrapper";
 import { Badge } from "@/components/ui/badge";
 import { formatDate, formatDateTime } from "@/lib/utils";
@@ -16,6 +16,23 @@ const Page = async ({ params: { id } }: SearchParamsProps) => {
 
   if (!ticket) {
     redirect("/404");
+  }
+
+  const attendanceStatus =
+    ticket.attendance && ticket.attendance.length > 0
+      ? ticket.attendance[0].status
+      : "Unknown";
+  // console.log("Attendance Status:", attendanceStatus);
+  let statusColor;
+  switch (attendanceStatus) {
+    case "GOING":
+      statusColor = "text-green-400";
+      break;
+    case "ATTENDED":
+      statusColor = "text-red-500";
+      break;
+    default:
+      statusColor = "gray";
   }
 
   return (
@@ -50,12 +67,8 @@ const Page = async ({ params: { id } }: SearchParamsProps) => {
             </div>
             <div>
               <p className="text-sm opacity-50">Status: </p>
-              <p className="font-medium">
-                {ticket.attendance.status ? (
-                  ticket.attendance.status
-                ) : (
-                  <span className="text-green-500">Going</span>
-                )}
+              <p className={`font-medium ${statusColor} capitalize`}>
+                {attendanceStatus}
               </p>
             </div>
           </div>
