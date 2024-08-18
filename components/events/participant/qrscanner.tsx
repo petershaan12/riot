@@ -22,7 +22,9 @@ const QrScannerComponent = ({ points }: QrScannerProps) => {
       try {
         console.log("Requesting camera access");
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: {
+            facingMode: { ideal: "environment" }, // Pilih kamera belakang
+          },
         });
         streamRef.current = stream;
         if (videoRef.current) {

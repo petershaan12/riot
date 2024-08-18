@@ -13,6 +13,7 @@ const SearchRiot = () => {
 
   return (
     <div>
+      
       <SearchIcon
         className="w-4 opacity-50  cursor-pointer"
         strokeWidth={3}
