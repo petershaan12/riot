@@ -4,17 +4,17 @@ import { currentUser } from "@/lib/utils";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
-  TableHead,
   TableHeader,
+  TableHead,
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
 import AttendButton from "@/components/events/participant/attend-button";
 import DeleteButton from "@/components/events/participant/delete-button";
 import { redirect } from "next/navigation";
+import { ScanBarcode } from "lucide-react";
+import PrintPdf from "@/components/events/participant/printpdf";
 
 type ParticipantEventSlug = {
   params: { slug: string };
@@ -42,9 +42,18 @@ const Page = async ({ params: { slug } }: ParticipantEventSlug) => {
     return "You are not authorized to access this page";
   }
 
+  // Prepare data for PDF
+  const pdfData =
+    participant?.map((p) => ({
+      name: p.user.name || "-",
+      phone: p.phone || "-",
+      email: p.user.email || "-",
+      status: p.status || "-",
+    })) ?? [];
+
   return (
     <>
-      <section className="bg-contain p-5 md:py-10">
+      <section className="bg-contain p-5 md:pt-10">
         <div className="flex flex-col items-center justify-center text-center gap-5">
           <div>
             <h1 className="text-2xl md:text-5xl uppercase font-bold">
@@ -54,16 +63,27 @@ const Page = async ({ params: { slug } }: ParticipantEventSlug) => {
           </div>
         </div>
       </section>
-      <section>
-        
+      <section className="flex justify-center mb-5 space-x-3 items-center">
+        <Link
+          href={`/events/${slug}/participant/scan`}
+          className="flex bg-white text-black px-2 w-fit py-1 rounded-md hover:bg-white/60 hover:text-white"
+        >
+          <ScanBarcode /> <p>Scan</p>
+        </Link>
+        <PrintPdf
+          data={pdfData}
+          fileName={`${event.title}_participants.pdf`}
+          eventTitle={event.title}
+        />
       </section>
-      <section className="md:w-[1200px] w-screen px-10">
+      <section id="participant-table" className="md:w-[1200px] w-screen px-10">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Username</TableHead>
+              <TableHead>Name</TableHead>
               <TableHead className="md:w-[200px]">Phone Number</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -72,7 +92,7 @@ const Page = async ({ params: { slug } }: ParticipantEventSlug) => {
               <TableRow key={p.id}>
                 <TableCell className="hover:text-primary hover:underline">
                   <Link href={`/profile/${p.user.username}`} target="_blank">
-                    {p.user.username}
+                    {p.user.name}
                   </Link>
                 </TableCell>
                 <TableCell className="hover:text-primary hover:underline">
@@ -81,6 +101,7 @@ const Page = async ({ params: { slug } }: ParticipantEventSlug) => {
                   </Link>
                 </TableCell>
                 <TableCell>{p.user.email}</TableCell>
+                <TableCell>{p.status}</TableCell>
                 <TableCell className="text-right flex justify-end">
                   <AttendButton
                     attendanceId={p.id}

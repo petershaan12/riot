@@ -94,7 +94,7 @@ const QrScannerComponent = ({ points }: QrScannerProps) => {
       {isScanning ? (
         <video
           ref={videoRef}
-          className="w-[300px] h-[300px] max-w-md border rounded-md border-black"
+          className="w-[300px] h-[300px] max-w-md  rounded-md"
           autoPlay
           playsInline
         />
@@ -102,7 +102,7 @@ const QrScannerComponent = ({ points }: QrScannerProps) => {
         <img
           src="/assets/images/qrcode.png"
           alt="QR Code"
-          className="w-[300px] h-[300px] max-w-md border rounded-md border-black"
+          className="w-[300px] h-[300px] max-w-md  border-none rounded-md "
         />
       )}
       <button

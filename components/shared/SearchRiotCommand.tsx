@@ -157,7 +157,7 @@ const SearchRiotCommand = ({ onClose }: { onClose: () => void }) => {
                 <span>Profile</span>
               </CommandItem>
               <CommandItem
-                onSelect={() => handleNavigate("/settings/profile")}
+                onSelect={() => handleNavigate("/profile/ubahProfile")}
                 className="flex items-center p-2 hover:bg-gray-700 rounded-md cursor-pointer"
               >
                 <Settings className="mr-2 h-5 w-5" />

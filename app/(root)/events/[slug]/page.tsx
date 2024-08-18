@@ -43,7 +43,7 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
           </div>
           <div className="md:block flex items-center justify-center space-x-2 md:mb-0 mb-5 ">
             <CopyLink />
-            <Badge className="bg-[#352F20] text-[#ECCB56] cursor-pointer text-xs md:text-xs hover:text-black py-1 px-2 md:px-4 md:mt-4">
+            <Badge className="bg-[#352F20] text-[#ECCB56] cursor-pointer text-xs  hover:text-black py-1 px-2  md:mt-4">
               {event.category.name}
             </Badge>
             <p className="text-xs opacity-50  md:hidden">Contact The Host</p>
