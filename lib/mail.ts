@@ -50,8 +50,8 @@ export function compileAttendTemplate(
   tautan: string,
   ticketId: string
 ) {
-  const baseUrlEvent = "http://localhost:3000/events/";
-  const baseUrlTicket = "http://localhost:3000/ticket/";
+  const baseUrlEvent = "https://riot-id.vercel.app/events/";
+  const baseUrlTicket = "https://riot-id.vercel.app/ticket/";
   const fullTautan = `${baseUrlEvent}${tautan}`;
   const fullTicketId = `${baseUrlTicket}${ticketId}`;
   const template = handlebars.compile(attendTemplate);
