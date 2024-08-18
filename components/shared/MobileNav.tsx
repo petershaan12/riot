@@ -25,6 +25,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLogin, isOrganization }) => {
             height={10}
             alt="riot Logo"
           />
+          
           <NavItems isLogin={isLogin} isOrganization={isOrganization} />
           {!isLogin ? (
             <Button

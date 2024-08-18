@@ -54,6 +54,9 @@ const Page = async ({ params: { slug } }: ParticipantEventSlug) => {
           </div>
         </div>
       </section>
+      <section>
+        
+      </section>
       <section className="md:w-[1200px] w-screen px-10">
         <Table>
           <TableHeader>

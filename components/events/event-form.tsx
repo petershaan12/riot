@@ -225,7 +225,7 @@ export const EventForm = ({
               name="buildingName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Event Title</FormLabel>
+                  <FormLabel>Place</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -356,7 +356,8 @@ export const EventForm = ({
                     </div>
                   </FormControl>
                   <FormDescription>
-                    Link must be start with alphabet, without space (opsional)
+                    Link must be start with alphabet, without space (opsional),
+                    onec you created you cant edit the slug event
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

@@ -131,6 +131,38 @@ body {
   position: absolute;
   width: 100%;
   height: 280px;
-  z-index: 10;
+  z-index: -10;
   opacity: 100;
+}
+
+/* WebKit browsers */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+  border-radius: 10px;/* Track color */
+}
+
+::-webkit-scrollbar-thumb {
+
+  background: #888; /* Scrollbar color */
+}
+
+::-moz-scrollbar-button:decrement,
+::-moz-scrollbar-button:increment,
+::-webkit-scrollbar-button:decrement,
+::-webkit-scrollbar-button:increment {
+  width: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Scrollbar color on hover */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin; /* "auto" or "thin" */
+  scrollbar-color: #888 #f1f1f1; /* Scrollbar color and track color */
 }

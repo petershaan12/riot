@@ -3,31 +3,25 @@ export const headerLinks = [
     label: "About",
     route: "/about",
     protected: false,
-    organization: false
+    organization: false,
   },
   {
     label: "Events",
     route: "/events",
     protected: false,
-    organization: false
+    organization: false,
   },
   {
     label: "Rank",
     route: "/rank",
     protected: false,
-    organization: false
+    organization: false,
   },
   {
     label: "Create Event",
     route: "/events/create",
     protected: true,
-    organization: true
-  },
-  {
-    label: "My Profile",
-    route: "/profile",
-    protected: true,
-    organization: false
+    organization: true,
   },
 ];
 

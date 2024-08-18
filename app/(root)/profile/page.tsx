@@ -35,6 +35,8 @@ const Page = async () => {
   };
   const formattedDate = dateObject.toLocaleDateString("en-us", options);
 
+  console.log(user);
+
   return (
     <>
       <section className=" p-2 md:py-10  max-w-5xl flex justify-center ">

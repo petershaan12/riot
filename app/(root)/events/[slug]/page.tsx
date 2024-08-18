@@ -43,10 +43,13 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
           </div>
           <div className="md:block flex items-center justify-center space-x-2 md:mb-0 mb-5 ">
             <CopyLink />
+            <Badge className="bg-[#352F20] text-[#ECCB56] cursor-pointer text-xs md:text-xs hover:text-black py-1 px-2 md:px-4 md:mt-4">
+              {event.category.name}
+            </Badge>
             <p className="text-xs opacity-50  md:hidden">Contact The Host</p>
             <p className="text-xs opacity-50  md:hidden">Report Events</p>
           </div>
-          <div className="flex items-center md:px-5">
+          <div className="flex items-center my-5">
             <Avatar className="cursor-pointer">
               <AvatarImage src={event.user.image || ""} />
               <AvatarFallback>
@@ -147,8 +150,13 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
           )}
 
           <div className="mt-10">
-            <h4 className="py-2">Location Detail</h4>
-            <Separator className="bg-white" />
+            <h4 className="py-2 font-medium">Description</h4>
+            <Separator className="bg-white/20" />
+            <p className="my-5">{event.description}</p>
+          </div>
+          <div className="mt-10 ">
+            <h4 className="py-2 font-medium">Location Detail</h4>
+            <Separator className="bg-white/20" />
             <p className="my-5">{event.location}</p>
 
             <MapDisplay address={event.location} />

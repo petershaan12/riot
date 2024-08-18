@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BellIcon, SearchIcon, Settings } from "lucide-react";
 import { UserRole } from "@prisma/client";
+import SearchRiot from "./SearchRiot";
 
 const Header = async () => {
   const session = await auth();
@@ -46,14 +47,11 @@ const Header = async () => {
 
         <div className="flex  gap-3 items-center">
           <p className="opacity-50 sm:text-base text-sm">{currentTime}</p>
-          <SearchIcon
+          <SearchRiot />
+          {/* <BellIcon
             className="w-4 opacity-50 hidden md:block"
             strokeWidth={3}
-          />
-          <BellIcon
-            className="w-4 opacity-50 hidden md:block"
-            strokeWidth={3}
-          />
+          /> */}
           {!session?.user ? (
             <Button
               asChild
@@ -77,10 +75,7 @@ const Header = async () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem className="hover:cursor-pointer ">
-                  <Link
-                    href="/profile/ubahProfile"
-                    className="flex items-center"
-                  >
+                  <Link href="/profile" className="flex items-center">
                     <Settings className="w-4 mr-2" />
                     Profile
                   </Link>

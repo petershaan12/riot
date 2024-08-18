@@ -123,4 +123,29 @@ const getDuplicateCategories = async (name: string) => {
   }
 };
 
-export { ubahProfile, getCategories, createCategories };
+const searchAll = async (search: string) => {
+  console.log("search", search);
+  const users = await db.user.findMany({
+    where: {
+      username: {
+        contains: search,
+        mode: "insensitive",
+      },
+    },
+  });
+
+  const events = await db.event.findMany({
+    where: {
+      title: {
+        contains: search,
+        mode: "insensitive",
+      },
+    },
+  });
+
+  console.log(users, events);
+
+  return { users, events };
+};
+
+export { ubahProfile, getCategories, createCategories, searchAll };
