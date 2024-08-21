@@ -1,22 +1,31 @@
 "use server";
-import { currentUser, handleError, saltAndHashPassword } from "@/lib/utils";
 import { SettingSchema } from "@/schemas";
-import * as z from "zod";
+import { z } from "zod";
 import { getUserById } from "./auth";
 import { db } from "@/lib/db";
-import { compare } from "bcryptjs";
 import path from "path";
+import { compare } from "bcryptjs";
+import { currentUser, saltAndHashPassword } from "@/lib/utils";
 import fs from "fs/promises";
 
-const ubahProfile = async (
+const ubahProfileAdmin = async (
   values: z.infer<typeof SettingSchema>,
   userId: string
 ) => {
+  const adminUser = await currentUser();
+
+  if (!adminUser || adminUser.role !== "ADMIN") {
+    return { error: "Unauthorized" };
+  }
+
+  // Get the user by ID (the user to be updated)
   const dbUser = (await getUserById(userId)) as any;
 
-  if (!dbUser) return { error: "Unauthorized" };
+  if (!dbUser) {
+    return { error: "User not found" };
+  }
 
-  if (dbUser.isOAtuh) {
+  if (dbUser.isOAuth) {
     values.email = undefined;
     values.password = undefined;
     values.newPassword = undefined;
@@ -34,7 +43,7 @@ const ubahProfile = async (
     values.newPassword = undefined;
   }
 
-  //Change Bio
+  // Change Bio
   if (values.bio) {
     if (values.bio.length > 150) {
       return { error: "Bio cannot exceed 150 characters." };
@@ -42,10 +51,9 @@ const ubahProfile = async (
     values.bio = values.bio.substring(0, 150);
   }
 
-  //Change Image
+  // Change Image
   if (values.image && values.image !== dbUser.image) {
     try {
-      // Extract the base64 part of the image string if it's encoded
       const base64Data = values.image.split(";base64,").pop();
       if (!base64Data) {
         return { error: "Invalid image" };
@@ -74,73 +82,33 @@ const ubahProfile = async (
     },
   });
 
-  return { success: "Profle Updated" };
+  return { success: "Profile Updated" };
 };
 
+const deleteUserAdmin = async (userId: string) => {
+  const adminUser = await currentUser();
 
-
-const getCategories = async () => {
-  const categories = await db.category.findMany();
-  return categories;
-};
-
-const createCategories = async (name: string, points: number) => {
-  const exisitingCategory = await getDuplicateCategories(name);
-  if (exisitingCategory) {
-    return { error: "Category already exist" };
+  if (!adminUser || adminUser.role !== "ADMIN") {
+    return { error: "Unauthorized" };
   }
 
-  if (name.length > 20) {
-    return { error: "Category name cannot exceed 20 characters" };
-  }
-
-  const category = await db.category.create({
-    data: {
-      name,
-      points,
-    },
-  });
-
-  return { success: "Category added", id: category.id, name: category.name };
-};
-
-const getDuplicateCategories = async (name: string) => {
-  try {
-    const category = await db.category.findFirst({
-      where: {
-        name,
-      },
-    });
-
-    return category;
-  } catch (e) {
-    handleError(e);
-  }
-};
-
-const searchAll = async (search: string) => {
-  console.log("search", search);
-  const users = await db.user.findMany({
+  const user = await db.user.findUnique({
     where: {
-      username: {
-        contains: search,
-        mode: "insensitive",
-      },
+      id: userId,
     },
   });
 
-  const events = await db.event.findMany({
+  if (!user) {
+    return { error: "User not found" };
+  }
+
+  await db.user.delete({
     where: {
-      title: {
-        contains: search,
-        mode: "insensitive",
-      },
+      id: userId,
     },
   });
 
-  console.log(users, events);
-
-  return { users, events };
+  return { success: "User deleted" };
 };
 
-export { ubahProfile, getCategories, createCategories, searchAll };
+export { ubahProfileAdmin, deleteUserAdmin };

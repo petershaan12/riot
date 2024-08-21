@@ -1,7 +1,7 @@
 "use client";
 
 import { deleteUserAttend } from "@/app/actions/user";
-import { Check, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 import { startTransition, useState } from "react";
 import { toast } from "sonner";
 
@@ -9,16 +9,22 @@ type AttendButtonProps = {
   attendanceId: string;
   userId: string;
   title: string;
+  ticketId: string;
 };
 
-const DeleteButton = ({ attendanceId, userId, title }: AttendButtonProps) => {
+const DeleteButton = ({
+  attendanceId,
+  userId,
+  ticketId,
+  title,
+}: AttendButtonProps) => {
   const [hasAttended, setHasAttended] = useState(false);
 
   const handleAttend = async () => {
     const toastId = toast.loading("Processing...");
 
     startTransition(() => {
-      deleteUserAttend(attendanceId, userId, title)
+      deleteUserAttend(attendanceId, userId, title, ticketId)
         .then((data) => {
           if (data.error) {
             toast.error(data.error, { id: toastId });
@@ -32,7 +38,7 @@ const DeleteButton = ({ attendanceId, userId, title }: AttendButtonProps) => {
           }
         })
         .catch(() => {
-          toast.error("Failed to attend the user");
+          toast.error("Failed to delete the user");
         });
     });
   };

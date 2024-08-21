@@ -113,6 +113,7 @@ const Page = async ({ params: { slug } }: ParticipantEventSlug) => {
                     attendanceId={p.id}
                     userId={p.user.id}
                     title={p.event.title}
+                    ticketId={p.ticketId}
                   />
                 </TableCell>
               </TableRow>

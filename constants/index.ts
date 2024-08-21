@@ -3,25 +3,26 @@ export const headerLinks = [
     label: "About",
     route: "/about",
     protected: false,
-    organization: false,
   },
   {
     label: "Events",
     route: "/events",
     protected: false,
-    organization: false,
   },
   {
     label: "Rank",
     route: "/rank",
     protected: false,
-    organization: false,
   },
   {
     label: "Create Event",
     route: "/events/create",
     protected: true,
-    organization: true,
+  },
+  {
+    label: "User",
+    route: "/user",
+    protected: true,
   },
 ];
 
@@ -46,5 +47,7 @@ export const profilDefaultValues = {
   bio: undefined,
   password: undefined,
   newPassword: undefined,
+  role: "",
+  points: undefined,
 };
 

@@ -7,6 +7,19 @@ import { handleError } from "@/lib/utils";
 const getAllUser = async () => {
   try {
     const users = await db.user.findMany({
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+    return users;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+const getAllParticipant = async () => {
+  try {
+    const users = await db.user.findMany({
       select: {
         id: true,
         name: true,
@@ -51,7 +64,7 @@ const getUserAttendEvent = async (userId: string) => {
 
 const getUserRank = async (userId: string) => {
   try {
-    const users = await getAllUser();
+    const users = await getAllParticipant();
 
     if (!users) {
       return { error: "Failed to retrieve users" };
@@ -197,7 +210,8 @@ const editUserAttend = async (
 const deleteUserAttend = async (
   attendanceId: string,
   userId: string,
-  title: string
+  title: string,
+  ticketId: string
 ) => {
   try {
     const user = await db.user.findUnique({
@@ -213,6 +227,12 @@ const deleteUserAttend = async (
     await db.attendance.delete({
       where: {
         id: attendanceId,
+      },
+    });
+
+    await db.ticket.delete({
+      where: {
+        id: ticketId,
       },
     });
 
@@ -238,6 +258,7 @@ const deleteUserAttend = async (
 
 export {
   getAllUser,
+  getAllParticipant,
   getUserRank,
   editUserAttend,
   getUserAttendEvent,

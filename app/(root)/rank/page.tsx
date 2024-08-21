@@ -1,8 +1,8 @@
-import { getAllUser } from "@/app/actions/user";
+import { getAllParticipant } from "@/app/actions/user";
 import Rank from "@/components/rank/rank";
 
 const Page = async () => {
-  const allUsers = await getAllUser();
+  const allUsers = await getAllParticipant();
 
   if (!allUsers) {
     return <div>No users found</div>; // Handle the case when no users are returned

@@ -8,23 +8,30 @@ import React from "react";
 interface NavItemsProps {
   isLogin: boolean;
   isOrganization: boolean;
+  isAdmin: boolean;
 }
 
-const NavItems: React.FC<NavItemsProps> = ({ isLogin, isOrganization }) => {
+const NavItems: React.FC<NavItemsProps> = ({
+  isLogin,
+  isAdmin,
+  isOrganization,
+}) => {
   const pathname = usePathname();
   // console.log("isLogin prop:", isLogin);
   // console.log("isAdmin", isAdmin);
 
   const filteredNavItems = headerLinks.filter((item) => {
     if (item.protected) {
-      if (item.organization) {
-        return isOrganization;
+      if (item.label === "Create Event" && !(isOrganization || isAdmin)) {
+        return false;
+      }
+      if (item.label === "User" && !isAdmin) {
+        return false;
       }
       return isLogin;
     }
     return true;
   });
-
   // console.log("filteredNavItems:", filteredNavItems);
   return (
     <ul className="flex flex-col items-start gap-5 md:flex-row">

@@ -14,6 +14,8 @@ export const SettingSchema = z
       .optional(),
     password: z.string().min(6).optional(),
     newPassword: z.string().min(6).optional(),
+    role: z.enum(["USER", "ORGANIZATION", "ADMIN"]).optional(),
+    points: z.number().optional(),
   })
   .refine(
     (data) => {

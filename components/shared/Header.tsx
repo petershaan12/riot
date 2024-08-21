@@ -21,8 +21,8 @@ import SearchRiot from "./SearchRiot";
 const Header = async () => {
   const session = await auth();
   const currentTime = getCurrentTime();
-  const isOrganization = (role: UserRole): boolean =>
-    role === UserRole.ORGANIZATION || role === UserRole.ADMIN;
+  const isOrganization = (role: UserRole): boolean => role === UserRole.ORGANIZATION;
+  const isAdmin = (role: UserRole): boolean => role === UserRole.ADMIN;
 
   return (
     <header className="w-full wrapper z-10 ">
@@ -40,6 +40,7 @@ const Header = async () => {
           <nav className="hidden md:block">
             <NavItems
               isLogin={!!session}
+              isAdmin={isAdmin(session?.user?.role)}
               isOrganization={isOrganization(session?.user?.role)}
             />
           </nav>

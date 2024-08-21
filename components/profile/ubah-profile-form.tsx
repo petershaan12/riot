@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -27,8 +28,22 @@ import { useTransition, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { ubahProfileAdmin } from "@/app/actions/admin";
 
-export const UbahProfileForm = ({ user }: any) => {
+export const UbahProfileForm = ({
+  user,
+  isAdmin,
+}: {
+  user: any;
+  isAdmin?: boolean;
+}) => {
   const [error, setError] = useState<string | undefined>();
   const [errorImage, setErrorImage] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
@@ -42,6 +57,8 @@ export const UbahProfileForm = ({ user }: any) => {
     username: user?.username || profilDefaultValues.username,
     email: user?.email || profilDefaultValues.email,
     bio: user?.bio || profilDefaultValues.bio,
+    role: user?.role || profilDefaultValues.role,
+    points: user?.points || profilDefaultValues.points,
   };
 
   const form = useForm<z.infer<typeof SettingSchema>>({
@@ -60,11 +77,14 @@ export const UbahProfileForm = ({ user }: any) => {
   const isFormDirty =
     watch("name") !== initialValues.name ||
     watch("username") !== initialValues.username ||
-    watch("email") !== initialValues.email ||
     watch("bio") !== initialValues.bio ||
     watch("image") !== initialValues.image ||
     watch("password") !== initialValues.password ||
-    watch("newPassword") !== initialValues.newPassword;
+    watch("newPassword") !== initialValues.newPassword ||
+    watch("role") !== initialValues.role ||
+    watch("points") !== initialValues.points;
+
+  console.log(isFormDirty);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorImage("");
@@ -97,13 +117,18 @@ export const UbahProfileForm = ({ user }: any) => {
 
     const cleanedValues = {
       ...values,
+      ...(values.email ? { email: values.email } : {}),
       ...(values.password ? { password: values.password } : {}),
       ...(values.newPassword ? { newPassword: values.newPassword } : {}),
       ...(values.image ? { image: values.image } : {}),
+      ...(values.role ? { role: values.role } : {}),
+      ...(values.points ? { points: values.points } : {}),
     };
 
     startTransition(() => {
-      ubahProfile(cleanedValues)
+      const ubahProfileFunction = isAdmin ? ubahProfileAdmin : ubahProfile;
+
+      ubahProfileFunction(cleanedValues, user.id)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -132,7 +157,7 @@ export const UbahProfileForm = ({ user }: any) => {
       <ArrowLeft
         className="w-4 hover:cursor-pointer"
         strokeWidth={3}
-        onClick={() => router.push("/profile")}
+        onClick={() => router.back()}
       />
       <div className="flex flex-col items-center  w-full text-center gap-5 ">
         <Avatar className="cursor-pointer w-[200px] h-[200px]">
@@ -214,16 +239,79 @@ export const UbahProfileForm = ({ user }: any) => {
                     <FormControl>
                       <Input
                         {...field}
-                        disabled={isPending}
+                        disabled={true}
                         placeholder="john.doe@example.com"
                         type="email"
                         className="bg-transparent text-white rounded-md placeholder-white/10"
                       />
                     </FormControl>
+                    <FormDescription>Email cannot be changed</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              {isAdmin && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="role"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Role</FormLabel>
+                        <FormControl>
+                          <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                              form.setValue(
+                                "role",
+                                value as
+                                  | "ADMIN"
+                                  | "USER"
+                                  | "ORGANIZATION"
+                                  | undefined
+                              );
+                              field.onChange(value);
+                            }}
+                            disabled={isPending}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Role" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-black">
+                              <SelectItem value="ADMIN">Admin</SelectItem>
+                              <SelectItem value="ORGANIZATION">
+                                Organization
+                              </SelectItem>
+                              <SelectItem value="USER">User</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="points"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Points</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={isPending}
+                            placeholder="User Points"
+                            type="number"
+                            className="bg-transparent text-white rounded-md placeholder-white/10"
+                            onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
               <FormField
                 control={form.control}
                 name="bio"

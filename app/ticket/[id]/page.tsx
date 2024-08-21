@@ -13,11 +13,13 @@ type SearchParamsProps = {
 
 const Page = async ({ params: { id } }: SearchParamsProps) => {
   const ticket: any = await getTicketQRCode(id);
+  console.log("Ticket:", ticket);
 
-  if (!ticket) {
+  if (!ticket || !ticket.event || !ticket.user) {
     redirect("/404");
   }
 
+  
   const attendanceStatus =
     ticket.attendance && ticket.attendance.length > 0
       ? ticket.attendance[0].status

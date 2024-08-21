@@ -19,7 +19,7 @@ const Page = async () => {
   if (user.username === null) {
     redirect("/auth/username");
   }
-  
+
   const events = await getUserEvents(user.id);
 
   const rankResponse = await getUserRank(user.id);
@@ -35,7 +35,7 @@ const Page = async () => {
   };
   const formattedDate = dateObject.toLocaleDateString("en-us", options);
 
-  console.log(user);
+  // console.log(user);
 
   return (
     <>
