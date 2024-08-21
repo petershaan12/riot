@@ -9,9 +9,14 @@ import Logout from "../auth/logout";
 interface MobileNavProps {
   isLogin: boolean;
   isOrganization: boolean;
+  isAdmin: boolean;
 }
 
-const MobileNav: React.FC<MobileNavProps> = ({ isLogin, isOrganization }) => {
+const MobileNav: React.FC<MobileNavProps> = ({
+  isLogin,
+  isOrganization,
+  isAdmin,
+}) => {
   return (
     <nav className="md:hidden">
       <Sheet>
@@ -25,8 +30,12 @@ const MobileNav: React.FC<MobileNavProps> = ({ isLogin, isOrganization }) => {
             height={10}
             alt="riot Logo"
           />
-          
-          <NavItems isLogin={isLogin} isOrganization={isOrganization} />
+
+          <NavItems
+            isLogin={isLogin}
+            isOrganization={isOrganization}
+            isAdmin={isAdmin}
+          />
           {!isLogin ? (
             <Button
               asChild

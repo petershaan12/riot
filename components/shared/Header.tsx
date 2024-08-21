@@ -89,6 +89,7 @@ const Header = async () => {
           )}
           <MobileNav
             isLogin={!!session}
+            isAdmin={isAdmin(session?.user?.role)}
             isOrganization={isOrganization(session?.user?.role)}
           />
         </div>
