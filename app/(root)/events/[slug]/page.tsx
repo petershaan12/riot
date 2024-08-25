@@ -12,6 +12,8 @@ import { redirect } from "next/navigation";
 import EventDialog from "@/components/events/event-dialog";
 import MapDisplay from "@/components/GoogleMaps";
 import EventImage from "@/components/EventImage";
+import ContactHost from "@/components/events/contact-host";
+import ReportEvent from "@/components/events/report-event";
 
 type SearchParamsProps = {
   params: { slug: string };
@@ -46,8 +48,8 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
             <Badge className="bg-[#352F20] text-[#ECCB56] cursor-pointer text-xs  hover:text-black py-1 px-2  md:mt-4">
               {event.category.name}
             </Badge>
-            <p className="text-xs opacity-50  md:hidden">Contact The Host</p>
-            <p className="text-xs opacity-50  md:hidden">Report Events</p>
+            <ContactHost user={user} event={event} />
+            <ReportEvent user={user} event={event} />
           </div>
           <div className="flex items-center my-5">
             <Avatar className="cursor-pointer">
@@ -64,10 +66,8 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
             </div>
           </div>
           <Separator className="bg-white/50 my-5" />
-          <p className="text-xs opacity-50 hidden md:block">Contact The Host</p>
-          <p className="text-xs opacity-50 mt-4 hidden md:block">
-            Report Events
-          </p>
+          <ContactHost user={user} event={event} />
+          <ReportEvent user={user} event={event} />
         </div>
 
         <div className="md:w-[600px]">
