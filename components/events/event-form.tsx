@@ -87,7 +87,7 @@ export const EventForm = ({
           ...event,
           imageUrl: event.image,
           dateTime: event.date,
-        }
+        }  
       : eventDefaultValues;
   const router = useRouter();
 

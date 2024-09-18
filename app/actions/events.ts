@@ -46,6 +46,7 @@ const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
       await fs.writeFile(imagePath, base64Data, { encoding: "base64" });
       values.imageUrl = `/storage/images/events/${values.url}.png`;
     } catch (error) {
+      console.log(error);
       return { error: "Failed to save image" };
     }
   }
@@ -89,11 +90,12 @@ const editEvent = async (values: z.infer<typeof eventsFormSchema>) => {
     return { error: "Please Choose Category" };
   }
 
-  if (!values.imageUrl) {
-    return { error: "Please input image" };
-  }
+  // Use the existing image if no new image is provided
+  let imageUrl = existingEvent.image;
+  console.log("imageUrl sekarang", imageUrl);
 
-  if (values.imageUrl) {
+  // Check if there is a new image provided
+  if (values.imageUrl !== existingEvent.image) {
     try {
       // Extract the base64 part of the image string if it's encoded
       const base64Data = values.imageUrl.split(";base64,").pop();
@@ -108,17 +110,19 @@ const editEvent = async (values: z.infer<typeof eventsFormSchema>) => {
         `${values.url}.png`
       );
       await fs.writeFile(imagePath, base64Data, { encoding: "base64" });
-      values.imageUrl = `/storage/images/events/${values.url}.png`;
+      imageUrl = `/storage/images/events/${values.url}.png`; // Update image URL with new image
     } catch (error) {
       return { error: "Failed to save image" };
     }
   }
 
+  console.log("imageUrl setelah", imageUrl);
+
   await db.event.update({
     where: { url: values.url },
     data: {
       title: values.title,
-      image: values.imageUrl,
+      image: imageUrl,
       buildingName: values.buildingName,
       description: values.description,
       price: values.price,
