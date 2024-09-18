@@ -22,7 +22,9 @@ const ReportEvent = ({ user, event }: any) => {
   return (
     <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger onClick={() => handleOpenChange(true)}>
-        <p className="text-xs opacity-50 ">Report Event</p>
+        <p className="text-xs opacity-50  hover:text-primary hover:opacity-100">
+          Report Event
+        </p>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-[#1a1c1d]/80 border-none shadow-none rounded-3xl ">
         <IoWarning className="w-8 h-8" />

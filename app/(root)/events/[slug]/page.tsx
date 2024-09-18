@@ -43,13 +43,15 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
               />
             </AspectRatio>
           </div>
-          <div className="md:block flex items-center justify-center space-x-2 md:mb-0 mb-5 ">
+          <div className="md:block items-center justify-center space-x-2 md:mb-0 mb-5 ">
             <CopyLink />
             <Badge className="bg-[#352F20] text-[#ECCB56] cursor-pointer text-xs  hover:text-black py-1 px-2  md:mt-4">
               {event.category.name}
             </Badge>
-            <ContactHost user={user} event={event} />
-            <ReportEvent user={user} event={event} />
+            <div className="inline md:hidden space-x-2">
+              <ContactHost user={user} event={event} />
+              <ReportEvent user={user} event={event} />
+            </div>
           </div>
           <div className="flex items-center my-5">
             <Avatar className="cursor-pointer">
@@ -66,8 +68,10 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
             </div>
           </div>
           <Separator className="bg-white/50 my-5" />
-          <ContactHost user={user} event={event} />
-          <ReportEvent user={user} event={event} />
+          <div className="md:flex md:flex-col items-start space-y-3 hidden">
+            <ContactHost user={user} event={event} />
+            <ReportEvent user={user} event={event} />
+          </div>
         </div>
 
         <div className="md:w-[600px]">

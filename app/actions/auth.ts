@@ -67,7 +67,11 @@ const updateUsername = async (
   values: z.infer<typeof UsernameSchema>
 ) => {
   const username = values.username as string;
-  // console.log(userId, values);
+
+  // Check if the username contains spaces
+  if (/\s/.test(username)) {
+    return { error: "Username should not contain spaces" };
+  }
 
   try {
     const existingUser = await db.user.findFirst({ where: { username } });

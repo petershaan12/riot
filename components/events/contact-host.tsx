@@ -20,7 +20,9 @@ const ContactHost = ({ user, event }: any) => {
   return (
     <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger onClick={() => handleOpenChange(true)}>
-        <p className="text-xs opacity-50 ">Contact The Host</p>
+        <p className="text-xs opacity-50  hover:text-primary hover:opacity-100">
+          Contact The Host
+        </p>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-[#1a1c1d]/80 border-none shadow-none rounded-3xl ">
         <Mail className="w-8 h-8" />
