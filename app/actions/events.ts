@@ -112,6 +112,7 @@ const editEvent = async (values: z.infer<typeof eventsFormSchema>) => {
       await fs.writeFile(imagePath, base64Data, { encoding: "base64" });
       imageUrl = `/storage/images/events/${values.url}.png`; // Update image URL with new image
     } catch (error) {
+      console.log(error);
       return { error: "Failed to save image" };
     }
   }
