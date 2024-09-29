@@ -24,6 +24,11 @@ export const headerLinks = [
     route: "/user",
     protected: true,
   },
+  {
+    label: "Organisasi",
+    route: "/organisasi",
+    protected: true,
+  },
 ];
 
 export const eventDefaultValues = {

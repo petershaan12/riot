@@ -1,39 +1,21 @@
 import { start } from "repl";
 import * as z from "zod";
 
-export const SettingSchema = z
-  .object({
-    name: z.string().optional(),
-    username: z.string().optional(),
-    image: z.string().url().optional(),
-    email: z.string().email().optional(),
-    bio: z
-      .string()
-      .min(3, "Title must be at least 3 characters long")
-      .max(150, "Title must be at most 150 characters long")
-      .optional(),
-    password: z.string().min(6).optional(),
-    newPassword: z.string().min(6).optional(),
-    role: z.enum(["USER", "ORGANIZATION", "ADMIN"]).optional(),
-    points: z.number().optional(),
-  })
-  .refine(
-    (data) => {
-      // Check that if newPassword is provided, password must also be provided
-      if (data.newPassword && !data.password) {
-        return false;
-      }
-      // Check that if password is provided, newPassword must also be provided
-      if (data.password && !data.newPassword) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message:
-        "If you provide a new password, the current password is required and vice versa",
-    }
-  );
+export const SettingSchema = z.object({
+  name: z.string().optional(),
+  username: z.string().optional(),
+  image: z.string().url().optional(),
+  email: z.string().email().optional(),
+  bio: z
+    .string()
+    .min(3, "Title must be at least 3 characters long")
+    .max(150, "Title must be at most 150 characters long")
+    .optional(),
+  password: z.string().min(6).optional(),
+  newPassword: z.string().min(6).optional(),
+  role: z.enum(["USER", "ORGANIZATION", "ADMIN"]).optional(),
+  points: z.number().optional(),
+});
 
 export const LoginSchema = z.object({
   email: z.string().email({
@@ -89,7 +71,22 @@ export const eventsFormSchema = z.object({
   url: z.string(),
 });
 
-
 export const categoriesSchema = z.object({
   name: z.string(),
+});
+
+export const organisasiFormSchema = z.object({
+  name: z.string().optional(),
+  username: z.string().optional(),
+  email: z.string().email().optional(),
+  password: z.string().min(6).optional(),
+});
+
+export const organisasiEditFormSchema = z.object({
+  name: z.string().optional(),
+  username: z.string().optional(),
+  image: z.string().url().optional(),
+  email: z.string().email().optional(),
+  password: z.string().min(6).optional(),
+  role: z.enum(["USER", "ORGANIZATION", "ADMIN"]).optional(),
 });

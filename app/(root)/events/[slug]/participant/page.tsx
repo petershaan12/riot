@@ -15,6 +15,7 @@ import DeleteButton from "@/components/events/participant/delete-button";
 import { redirect } from "next/navigation";
 import { ScanBarcode } from "lucide-react";
 import PrintPdf from "@/components/events/participant/printpdf";
+import React from "react";
 
 type ParticipantEventSlug = {
   params: { slug: string };
@@ -91,7 +92,7 @@ const Page = async ({ params: { slug } }: ParticipantEventSlug) => {
             {participant?.map((p) => (
               <TableRow key={p.id}>
                 <TableCell className="hover:text-primary hover:underline">
-                  <Link href={`/profile/${p.user.username}`} target="_blank">
+                  <Link href={`/${p.user.username}`} target="_blank">
                     {p.user.name}
                   </Link>
                 </TableCell>

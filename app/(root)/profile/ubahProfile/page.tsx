@@ -1,16 +1,17 @@
 import { UbahProfileForm } from "@/components/profile/ubah-profile-form";
 import { currentUser } from "@/lib/utils";
 import { redirect } from "next/navigation";
+import React from "react";
 
 const Page = async () => {
   const user = await currentUser();
 
-  if (user.username === null) {
-    redirect("/auth/username");
-  }
-
   if (!user) {
     redirect("/auth/login");
+  }
+
+  if (user.username === null) {
+    redirect("/auth/username");
   }
 
   return (

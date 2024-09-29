@@ -1,5 +1,5 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Calendar, File, Settings } from "lucide-react";
+import { Calendar, Settings } from "lucide-react";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { currentUser } from "@/lib/utils";
@@ -8,7 +8,7 @@ import ProfileEventCard from "@/components/profile/profile-event-card";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getUserAttendEvent, getUserRank } from "@/app/actions/user";
-import { Badge } from "@/components/ui/badge";
+import React from "react";
 
 const Page = async () => {
   const user = await currentUser();
@@ -110,7 +110,7 @@ const Page = async () => {
           </div>
         </div>
         <Link href="/profile/ubahProfile">
-          <Settings className="w-4" />
+          <Settings className="w-4 hover:text-primary" />
         </Link>
       </section>
       <section className="md:w-[700px] mb-12">

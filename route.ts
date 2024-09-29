@@ -4,15 +4,15 @@
  * @type {string[]}
  */
 
-export const publicRoutes = [
-  "/",
-  "/about",
-  "/events",
-  "/rank",
-  "/events/*",
-  "/profile/*",
-  "/ticket/*",
-  "/404",
+export const protectedRoute = [
+  "/profile",
+  "/profile/ubahProfile",
+  "/events/create",
+  "/organisasi",
+  "/organisasi/create",
+  "/auth/username",
+  "/auth/logout",
+  "/auth/error",
 ];
 
 /**

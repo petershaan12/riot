@@ -76,12 +76,12 @@ const Header = async () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem className="hover:cursor-pointer ">
-                  <Link href="/profile" className="flex items-center">
+                  <Link href="/profile" className="flex items-center w-full">
                     <Settings className="w-4 mr-2" />
                     Profile
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="hover:cursor-pointer ">
+                <DropdownMenuItem className="hover:cursor-pointer w-full ">
                   <Logout />
                 </DropdownMenuItem>
               </DropdownMenuContent>

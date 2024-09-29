@@ -54,7 +54,7 @@ const Rank = ({ users }: RankComponent) => {
               <span className="md:text-lg font-semibold">
                 {index + 1}.
                 <Link
-                  href={`/profile/${user.username}`}
+                  href={`/${user.username}`}
                   className="hover:underline hover:text-primary px-2"
                 >
                   {user.username}

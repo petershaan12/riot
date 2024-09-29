@@ -2,16 +2,22 @@
 
 import { toast } from "sonner";
 import { Badge } from "../ui/badge";
+import React from "react";
 
-const CopyLink = () => {
+type CopyLinkProps = {
+  name: string;
+};
+
+const CopyLink = (name: CopyLinkProps) => {
   const handleCopyLink = () => {
-    const url = window.location.href;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    const url = `${baseUrl}/events/${name.name}`;
     navigator.clipboard
       .writeText(url)
       .then(() => {
         toast.success("Link copied to clipboard!");
       })
-    .catch((err) => {
+      .catch((err) => {
         toast.error("Failed to copy link.");
       });
   };

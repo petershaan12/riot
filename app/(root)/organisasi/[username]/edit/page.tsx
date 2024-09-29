@@ -1,5 +1,5 @@
 import { getUserByUsernameAdmin } from "@/app/actions/auth";
-import { UbahProfileForm } from "@/components/profile/ubah-profile-form";
+import { UbahOrganisasiForm } from "@/components/organisasi/ubah-organisasi-form";
 import { redirect } from "next/navigation";
 
 type UpdateEventProps = {
@@ -15,7 +15,7 @@ const Page = async ({ params: { username } }: UpdateEventProps) => {
 
   return (
     <section className=" p-5 md:py-10 flex flex-col ">
-      <UbahProfileForm user={user.user} isOAuth={user.isOAuth} isAdmin={true} />
+      <UbahOrganisasiForm user={user.user} isOAuth={user.isOAuth} />
     </section>
   );
 };

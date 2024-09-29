@@ -1,5 +1,7 @@
-import { EventForm } from "@/components/events/event-form";
+import { OrganisasiForm } from "@/components/organisasi/OrganisasiForm";
 import { currentUser } from "@/lib/utils";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 const Page = async () => {
@@ -9,7 +11,7 @@ const Page = async () => {
     redirect("/auth/login");
   }
 
-  if (!user.role.includes("ORGANIZATION") && !user.role.includes("ADMIN")) {
+  if (!user.role.includes("ADMIN")) {
     return "You are not authorized to access this page";
   }
 
@@ -17,12 +19,15 @@ const Page = async () => {
     <section className="bg-contain p-5 md:py-10">
       <div className="flex flex-col items-center justify-center text-center gap-5">
         <div>
+          <Link href={`/organisasi`}>
+            <ArrowLeft className="w-4 hover:cursor-pointer mb-8 hover:text-primary" />
+          </Link>
           <h1 className="text-2xl md:text-5xl uppercase font-bold">
-            Create Events
+            Create Organization
           </h1>
-          <p className="opacity-50">Try make new Events</p>
+          <p className="opacity-50">Try make new Organization</p>
         </div>
-        <EventForm userId={user.id} type="create" />
+        <OrganisasiForm />
       </div>
     </section>
   );

@@ -10,6 +10,9 @@ const getAllUser = async () => {
       orderBy: {
         createdAt: "asc",
       },
+      where: {
+        role: "USER",
+      },
     });
     return users;
   } catch (error) {

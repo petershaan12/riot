@@ -1,7 +1,6 @@
 "use client";
 
 import Loading from "@/app/(root)/loading";
-import { ubahProfile } from "@/app/actions/settings";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -9,16 +8,14 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { profilDefaultValues } from "@/constants";
-import { SettingSchema } from "@/schemas";
+import { organisasiEditFormSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft } from "lucide-react";
@@ -35,17 +32,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ubahProfileAdmin } from "@/app/actions/admin";
 import React from "react";
+import { ubahOrganisasi } from "@/app/actions/organisasi";
 
-export const UbahProfileForm = ({
+export const UbahOrganisasiForm = ({
   user,
   isOAuth,
-  isAdmin,
 }: {
   user: any;
-  isOAuth?: boolean;
-  isAdmin?: boolean;
+  isOAuth: boolean;
 }) => {
   const [error, setError] = useState<string | undefined>();
   const [errorImage, setErrorImage] = useState<string | undefined>();
@@ -59,13 +54,11 @@ export const UbahProfileForm = ({
     name: user?.name || profilDefaultValues.name,
     username: user?.username || profilDefaultValues.username,
     email: user?.email || profilDefaultValues.email,
-    bio: user?.bio || profilDefaultValues.bio,
     role: user?.role || profilDefaultValues.role,
-    points: user?.points || profilDefaultValues.points,
   };
 
-  const form = useForm<z.infer<typeof SettingSchema>>({
-    resolver: zodResolver(SettingSchema),
+  const form = useForm<z.infer<typeof organisasiEditFormSchema>>({
+    resolver: zodResolver(organisasiEditFormSchema),
     defaultValues: initialValues,
   });
 
@@ -79,13 +72,11 @@ export const UbahProfileForm = ({
 
   const isFormDirty =
     watch("name") !== initialValues.name ||
+    watch("email") !== initialValues.email ||
     watch("username") !== initialValues.username ||
-    watch("bio") !== initialValues.bio ||
     watch("image") !== initialValues.image ||
     watch("password") !== initialValues.password ||
-    watch("newPassword") !== initialValues.newPassword ||
-    watch("role") !== initialValues.role ||
-    watch("points") !== initialValues.points;
+    watch("role") !== initialValues.role;
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorImage("");
@@ -111,25 +102,21 @@ export const UbahProfileForm = ({
     }
   };
 
-  const onSubmit = (values: z.infer<typeof SettingSchema>) => {
+  console.log("isOAuth", isOAuth);
+
+  const onSubmit = (values: z.infer<typeof organisasiEditFormSchema>) => {
     setError("");
     setSuccess("");
     const toastId = toast.loading("Updating Profile");
 
     const cleanedValues = {
       ...values,
-      ...(values.email ? { email: values.email } : {}),
       ...(values.password ? { password: values.password } : {}),
-      ...(values.newPassword ? { newPassword: values.newPassword } : {}),
       ...(values.image ? { image: values.image } : {}),
-      ...(values.role ? { role: values.role } : {}),
-      ...(values.points ? { points: values.points } : {}),
     };
 
     startTransition(() => {
-      const ubahProfileFunction = isAdmin ? ubahProfileAdmin : ubahProfile;
-
-      ubahProfileFunction(cleanedValues, user.id)
+      ubahOrganisasi(cleanedValues, user.id)
         .then((data) => {
           if (data.error) {
             setError(data.error);
@@ -156,7 +143,7 @@ export const UbahProfileForm = ({
   return (
     <>
       <ArrowLeft
-        className="w-4 hover:cursor-pointer hover:text-primary"
+        className="w-4 hover:cursor-pointer"
         strokeWidth={3}
         onClick={() => router.back()}
       />
@@ -200,7 +187,7 @@ export const UbahProfileForm = ({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Fullname</FormLabel>
+                    <FormLabel>Organization Name</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -240,73 +227,69 @@ export const UbahProfileForm = ({
                     <FormControl>
                       <Input
                         {...field}
-                        disabled={true}
                         placeholder="john.doe@example.com"
                         type="email"
                         className="bg-transparent text-white rounded-md placeholder-white/10"
                       />
                     </FormControl>
-                    <FormDescription>Email cannot be changed</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {isAdmin && (
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value}
+                        onValueChange={(value) => {
+                          form.setValue(
+                            "role",
+                            value as
+                              | "ADMIN"
+                              | "USER"
+                              | "ORGANIZATION"
+                              | undefined
+                          );
+                          field.onChange(value);
+                        }}
+                        disabled={isPending}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Role" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-black">
+                          <SelectItem value="ADMIN">Admin</SelectItem>
+                          <SelectItem value="ORGANIZATION">
+                            Organization
+                          </SelectItem>
+                          <SelectItem value="USER">User</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {isOAuth === false && (
                 <>
                   <FormField
                     control={form.control}
-                    name="role"
+                    name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Role</FormLabel>
-                        <FormControl>
-                          <Select
-                            value={field.value}
-                            onValueChange={(value) => {
-                              form.setValue(
-                                "role",
-                                value as
-                                  | "ADMIN"
-                                  | "USER"
-                                  | "ORGANIZATION"
-                                  | undefined
-                              );
-                              field.onChange(value);
-                            }}
-                            disabled={isPending}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Role" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-black">
-                              <SelectItem value="ADMIN">Admin</SelectItem>
-                              <SelectItem value="ORGANIZATION">
-                                Organization
-                              </SelectItem>
-                              <SelectItem value="USER">User</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="points"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Points</FormLabel>
+                        <FormLabel>New Password</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             disabled={isPending}
-                            placeholder="User Points"
-                            type="number"
+                            placeholder="*******"
+                            type="password"
                             className="bg-transparent text-white rounded-md placeholder-white/10"
-                            onChange={(e) =>
-                              field.onChange(parseInt(e.target.value, 10))
-                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -314,88 +297,6 @@ export const UbahProfileForm = ({
                     )}
                   />
                 </>
-              )}
-              <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bio</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        disabled={isPending}
-                        placeholder="Write something about yourself"
-                        className="bg-transparent text-white rounded-md placeholder-white/10"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {isOAuth === false ||
-                (!isAdmin && (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Old Password</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              disabled={isPending}
-                              placeholder="*******"
-                              type="password"
-                              className="bg-transparent text-white rounded-md placeholder-white/10"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="newPassword"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>New Password</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              disabled={isPending}
-                              placeholder="*******"
-                              type="password"
-                              className="bg-transparent text-white rounded-md placeholder-white/10"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </>
-                ))}
-              {isAdmin && isOAuth === false && (
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>New Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={isPending}
-                          placeholder="*******"
-                          type="password"
-                          className="bg-transparent text-white rounded-md placeholder-white/10"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               )}
             </div>
             <FormError message={error} />

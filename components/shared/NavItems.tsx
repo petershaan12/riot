@@ -17,12 +17,13 @@ const NavItems: React.FC<NavItemsProps> = ({
   isOrganization,
 }) => {
   const pathname = usePathname();
-  // console.log("isLogin prop:", isLogin);
-  // console.log("isAdmin", isAdmin);
 
   const filteredNavItems = headerLinks.filter((item) => {
     if (item.protected) {
       if (item.label === "Create Event" && !(isOrganization || isAdmin)) {
+        return false;
+      }
+      if (item.label === "Organisasi" && !isAdmin) {
         return false;
       }
       if (item.label === "User" && !isAdmin) {

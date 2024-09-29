@@ -5,6 +5,7 @@ import { currentUser } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import React from "react";
 
 type ParticipantEventSlug = {
   params: { slug: string };
@@ -35,7 +36,7 @@ const Page = async ({ params: { slug } }: ParticipantEventSlug) => {
       <section className="bg-contain p-5 md:py-10 grid grid-cols-1 md:grid-cols-2 gap-12">
         <div className="flex flex-col space-y-12  justify-center text-center">
           <Link href={`/events/${slug}/participant`} className="items-center ">
-            <ArrowLeft className="w-4 hover:cursor-pointer" />
+            <ArrowLeft className="w-4 hover:cursor-pointer hover:text-primary" />
           </Link>
           <div>
             <h1 className="text-2xl md:text-5xl uppercase font-bold">

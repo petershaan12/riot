@@ -5,50 +5,44 @@ import {
   apiAuthPrefix,
   authRoutes,
   DEFAULT_LOGIN_REDIRECT,
-  publicRoutes,
+  protectedRoute, // Pastikan ini daftar route yang perlu dilindungi
 } from "./route";
-
 
 export default async function middleware(request: NextRequest) {
   const { nextUrl } = request;
-  const session = await auth();
+  const session = await auth(); // Mendapatkan sesi pengguna
   const isLoggedIn = !!session?.user;
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-
-  const matchRoute = (route: string, pathname: string) => {
-    const regex = new RegExp(`^${route.replace("*", ".*")}$`);
-    return regex.test(pathname);
-  };
-
-  const isPublicRoute = publicRoutes.some((route) => {
-    const isMatch = matchRoute(route, nextUrl.pathname);
-    return isMatch;
-  });
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
   if (isApiAuthRoute) {
-    return null;
+    return NextResponse.next();
   }
 
+  // Jika ini adalah route otentikasi (login/register), redirect jika sudah login
   if (isAuthRoute) {
     if (isLoggedIn) {
-      return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+      return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl)); // Arahkan ke default jika sudah login
     }
-    return null;
+    return NextResponse.next(); // Biarkan user masuk ke halaman auth
   }
 
-  if (!isLoggedIn && !isPublicRoute) {
-    return NextResponse.redirect(new URL("/auth/login", nextUrl));
+  // Cek apakah ini route yang dilindungi
+  const isProtectedRoute = protectedRoute.includes(nextUrl.pathname);
+
+  // Jika ini route yang dilindungi dan user belum login, redirect ke /auth/login
+  if (isProtectedRoute && !isLoggedIn) {
+    return NextResponse.redirect(new URL("/auth/login", nextUrl)); // Redirect ke halaman login
   }
 
-  return NextResponse.next(); // Lanjutkan ke route yang diminta
+  return NextResponse.next(); // Lanjutkan ke route yang diminta jika sudah login
 }
 
 export const config = {
   matcher: [
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|otf|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     "/(api|trpc)(.*)",
-    "/event/:slug*",
+    "/event/:slug*", // Route untuk event atau halaman lain yang perlu middleware
   ],
 };

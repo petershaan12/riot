@@ -79,9 +79,7 @@ const SearchRiotCommand = ({ onClose }: { onClose: () => void }) => {
                     {results.users.map((user) => (
                       <CommandItem
                         key={user.id}
-                        onSelect={() =>
-                          handleNavigate(`/profile/${user.username}`)
-                        }
+                        onSelect={() => handleNavigate(`/${user.username}`)}
                         className="flex items-center p-2 hover:bg-gray-700 rounded-md cursor-pointer"
                       >
                         <Image

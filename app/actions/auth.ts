@@ -118,6 +118,22 @@ const getUserByUsername = async (username: string) => {
   }
 };
 
+const getUserByUsernameAdmin = async (username: string) => {
+  try {
+    const user = await db.user.findFirst({ where: { username } });
+    if (!user) {
+      return null;
+    }
+
+    const account = await db.account.findFirst({ where: { userId: user.id } });
+    const isOAuth = !!account;
+
+    return { user, isOAuth };
+  } catch (e) {
+    return null;
+  }
+};
+
 const getUserById = async (id: string) => {
   try {
     const user = await db.user.findUnique({ where: { id } });
@@ -157,4 +173,5 @@ export {
   generateUsername,
   updateUsername,
   getUserByUsername,
+  getUserByUsernameAdmin,
 };

@@ -1,6 +1,5 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Calendar, File, Settings } from "lucide-react";
-import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { currentUser } from "@/lib/utils";
 import { getUserEvents } from "@/app/actions/events";
@@ -9,6 +8,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getUserByUsername } from "@/app/actions/auth";
 import { getUserAttendEvent, getUserRank } from "@/app/actions/user";
+import React from "react";
 
 type SearchParamsProps = {
   params: { username: string };

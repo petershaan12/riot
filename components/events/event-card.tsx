@@ -32,6 +32,7 @@ import NoEvent from "./no-event";
 import MapDisplay from "../GoogleMaps";
 import EventImage from "../EventImage";
 import { Button } from "../ui/button";
+import React from "react";
 
 type Category = {
   name: string | null;
@@ -209,7 +210,7 @@ const EventCard = ({
                   </AvatarFallback>
                 </Avatar>
                 <Link
-                  href={`/profile/${sheetState.event.user.username}`}
+                  href={`/${sheetState.event.user.username}`}
                   className="hover:underline text-white hover:text-primary"
                 >
                   <div className=" flex space-x-3">

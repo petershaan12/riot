@@ -25,22 +25,10 @@ const ubahProfileAdmin = async (
     return { error: "User not found" };
   }
 
-  if (dbUser.isOAuth) {
-    values.email = undefined;
-    values.password = undefined;
-    values.newPassword = undefined;
-  }
-
   // Change Password
-  if (values.password && values.newPassword && dbUser.password) {
-    const passwordMatch = await compare(values.password, dbUser.password);
-    if (!passwordMatch) {
-      return { error: "Incorrect Old Password" };
-    }
-
-    const hashedPassword = await saltAndHashPassword(values.newPassword);
+  if (values.password) {
+    const hashedPassword = await saltAndHashPassword(values.password);
     values.password = hashedPassword;
-    values.newPassword = undefined;
   }
 
   // Change Bio

@@ -128,7 +128,7 @@ model Attendance {
 
   ticket    Ticket           @relation(fields: [ticketId], references: [id])
   event     Event            @relation(fields: [eventId], references: [id])
-  user      User             @relation(fields: [userId], references: [id])
+  user      User             @relation(fields: [userId], references: [id],  onDelete: Cascade)
 
   @@unique([eventId, userId])
 }
@@ -142,7 +142,7 @@ model Ticket {
   updatedAt DateTime @updatedAt
 
   event Event @relation(fields: [eventId], references: [id])
-  user  User  @relation(fields: [userId], references: [id])
+  user  User  @relation(fields: [userId], references: [id],  onDelete: Cascade)
   attendance Attendance[]
   @@unique([eventId, userId])
 }

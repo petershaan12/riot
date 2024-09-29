@@ -33,6 +33,7 @@ import { FaDollarSign } from "react-icons/fa";
 import { Checkbox } from "../ui/checkbox";
 import { createEvent, editEvent } from "@/app/actions/events";
 import { useRouter } from "next/navigation";
+import React from "react";
 import {
   GoogleMap,
   Marker,

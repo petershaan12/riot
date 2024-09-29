@@ -1,10 +1,9 @@
 import EventCard from "@/components/events/event-card";
 import { Calendar } from "@/components/ui/calendar";
 import { getAllEvents, getManyUserAttendance } from "@/app/actions/events";
-import TidakDitemukan from "@/components/shared/TidakDitemukan";
 import Category from "@/components/events/category";
 import { currentUser } from "@/lib/utils";
-
+import React from "react";
 type SearchParamsProps = {
   searchParams: { [key: string]: string | string[] | undefined };
 };

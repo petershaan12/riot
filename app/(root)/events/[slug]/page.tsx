@@ -14,6 +14,7 @@ import MapDisplay from "@/components/GoogleMaps";
 import EventImage from "@/components/EventImage";
 import ContactHost from "@/components/events/contact-host";
 import ReportEvent from "@/components/events/report-event";
+import React from "react";
 
 type SearchParamsProps = {
   params: { slug: string };
@@ -44,7 +45,7 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
             </AspectRatio>
           </div>
           <div className="md:block items-center justify-center space-x-2 md:mb-0 mb-5 ">
-            <CopyLink />
+            <CopyLink name={event?.url} />
             <Badge className="bg-[#352F20] text-[#ECCB56] cursor-pointer text-xs  hover:text-black py-1 px-2  md:mt-4">
               {event.category.name}
             </Badge>
@@ -64,7 +65,13 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
             </Avatar>
             <div className="p-3">
               <p className="text-xs">presented by</p>
-              <p className="font-bold">{event.user.name}</p>
+              <Link
+                href={`/${event.user.username}`}
+                passHref
+                className="font-bold hover:text-primary"
+              >
+                {event.user.name}
+              </Link>
             </div>
           </div>
           <Separator className="bg-white/50 my-5" />

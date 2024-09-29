@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/table";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getAllUser } from "@/app/actions/user";
 import DeleteButton from "@/components/admin/delete-button";
 import React from "react";
+import { getAllOrganisasi } from "@/app/actions/organisasi";
 
 const Page = async () => {
   const user = await currentUser();
@@ -21,7 +21,7 @@ const Page = async () => {
     redirect("/auth/login");
   }
 
-  const allUser = await getAllUser();
+  const allUser = await getAllOrganisasi();
 
   if (!user.role.includes("ADMIN")) {
     return "You are not authorized to access this page";
@@ -32,10 +32,20 @@ const Page = async () => {
       <section className="bg-contain p-5 md:pt-10">
         <div className="flex flex-col items-center justify-center text-center gap-5">
           <div>
-            <h1 className="text-2xl md:text-5xl uppercase font-bold">User</h1>
-            <p className="opacity-50">List User </p>
+            <h1 className="text-2xl md:text-5xl uppercase font-bold">
+              Organisasi
+            </h1>
+            <p className="opacity-50">List Organisasi </p>
           </div>
         </div>
+      </section>
+      <section className="flex justify-center mb-5 space-x-3 items-center">
+        <Link
+          href={`/organisasi/create`}
+          className="flex bg-white text-black px-2 w-fit py-1 rounded-md hover:bg-white/60 hover:text-white"
+        >
+          Create Organisasi
+        </Link>
       </section>
 
       <section
@@ -47,7 +57,6 @@ const Page = async () => {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>points</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -64,14 +73,13 @@ const Page = async () => {
                     {user.email}
                   </Link>
                 </TableCell>
-                <TableCell>{user.points}</TableCell>
                 <TableCell className="text-right flex justify-end space-x-5">
                   <Link href={`/${user.username}`}>
                     <button className="opacity-50 hover:text-primary hover:opacity-100">
                       View
                     </button>
                   </Link>
-                  <Link href={`/user/${user.username}/edit`}>
+                  <Link href={`/organisasi/${user.username}/edit`}>
                     <button className="text-primary hover:text-white">
                       Edit
                     </button>
