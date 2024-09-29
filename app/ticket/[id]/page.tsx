@@ -1,4 +1,5 @@
 import { getTicketQRCode } from "@/app/actions/qrcode";
+import { absentUserAttend } from "@/app/actions/user";
 import { CardWrapper } from "@/components/auth/card-wrapper";
 import { Badge } from "@/components/ui/badge";
 import { formatDate, formatDateTime } from "@/lib/utils";
@@ -10,27 +11,40 @@ import { redirect } from "next/navigation";
 type SearchParamsProps = {
   params: { id: string };
 };
-
 const Page = async ({ params: { id } }: SearchParamsProps) => {
   const ticket: any = await getTicketQRCode(id);
-  console.log("Ticket:", ticket);
 
   if (!ticket || !ticket.event || !ticket.user) {
     redirect("/404");
   }
 
-  
+  // Check if the event date is in the past
+  const isEventOutdated = new Date(ticket.event.date) < new Date();
+
+  if (isEventOutdated) {
+    console.log("Event is outdated");
+    if (ticket.attendance[0].status === AttendanceStatus.GOING) {
+      await absentUserAttend(ticket.attendance[0].id);
+    }
+  }
+
   const attendanceStatus =
-    ticket.attendance && ticket.attendance.length > 0
+    isEventOutdated && ticket.attendance.length === 0
+      ? "ABSENT"
+      : ticket.attendance && ticket.attendance.length > 0
       ? ticket.attendance[0].status
       : "Unknown";
-  // console.log("Attendance Status:", attendanceStatus);
+
   let statusColor;
+
   switch (attendanceStatus) {
     case "GOING":
       statusColor = "text-green-400";
       break;
     case "ATTENDED":
+      statusColor = "text-red-500";
+      break;
+    case "ABSENT":
       statusColor = "text-red-500";
       break;
     default:
@@ -39,10 +53,10 @@ const Page = async ({ params: { id } }: SearchParamsProps) => {
 
   return (
     <div className="flex h-screen flex-col w-screen bg-gradasi">
-      <main className="flex-1 z-10 justify-center flex   items-center ">
-        <div className="rounded-2xl bg-white w-[300px]  shadow-2xl text-black">
+      <main className="flex-1 z-10 justify-center flex items-center ">
+        <div className="rounded-2xl bg-white w-[300px] shadow-2xl text-black">
           <div className="p-4">
-            <Badge className="rounded-md  bg-gray-500/20 text-black/60">
+            <Badge className="rounded-md bg-gray-500/20 text-black/60">
               TICKET
             </Badge>
             <h1 className="text-2xl font-medium uppercase text-black my-2">
@@ -78,13 +92,13 @@ const Page = async ({ params: { id } }: SearchParamsProps) => {
       </main>
       <div className="text-xs mx-auto mb-12 font-medium flex items-center space-x-3">
         <p>Made by </p>
-        <Link className="underline cursor-pointer " href="/">
+        <Link className="underline cursor-pointer" href="/">
           <Image
             src="/assets/images/logo.svg"
             width={70}
             height={0}
             alt="riot Logo"
-            className="mx-auto  "
+            className="mx-auto"
           />
         </Link>
       </div>

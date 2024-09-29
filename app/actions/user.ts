@@ -50,6 +50,7 @@ const getUserAttendEvent = async (userId: string) => {
     const events = await db.attendance.findMany({
       where: {
         userId,
+        status: "ATTENDED",
       },
     });
 
@@ -259,6 +260,28 @@ const deleteUserAttend = async (
   }
 };
 
+const absentUserAttend = async (attendanceId: string) => {
+  try {
+    const attend = await db.attendance.update({
+      where: {
+        id: attendanceId,
+      },
+      data: {
+        status: "ABSENT",
+      },
+    });
+
+    if (!attend) {
+      return { error: "Failed to retrieve events" };
+    }
+
+    return { success: "User Absent" };
+  } catch (error) {
+    handleError(error);
+    return { error: "Failed to retrieve user attendance" };
+  }
+};
+
 export {
   getAllUser,
   getAllParticipant,
@@ -267,4 +290,5 @@ export {
   getUserAttendEvent,
   deleteUserAttend,
   scanUserAttend,
+  absentUserAttend,
 };

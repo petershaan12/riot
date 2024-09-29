@@ -13,6 +13,7 @@ import {
 import Image from "next/image";
 import { searchAll } from "@/app/actions/settings";
 import debounce from "lodash.debounce";
+import React from "react";
 
 const SearchRiotCommand = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();

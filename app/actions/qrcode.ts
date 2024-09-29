@@ -50,6 +50,7 @@ export const getTicketQRCode = async (id: string) => {
         },
         attendance: {
           select: {
+            id: true,
             status: true,
           },
         },

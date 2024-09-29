@@ -98,6 +98,10 @@ const EventCard = ({
     });
   };
 
+  const isOutdated = (eventDate: Date) => {
+    return new Date(eventDate) < new Date(); // Jika event sudah lewat, maka true
+  };
+
   return (
     <>
       <div>
@@ -267,7 +271,16 @@ const EventCard = ({
                   </Link>
                 </div>
               ) : !sheetState.event.isAttend ? (
-                <EventDialog user={sheetState.user} event={sheetState.event} />
+                isOutdated(sheetState.event.date) ? (
+                  <div className="text-red-500 font-bold text-center mt-4">
+                    Registration Closed - Event is Outdated
+                  </div>
+                ) : (
+                  <EventDialog
+                    user={sheetState.user}
+                    event={sheetState.event}
+                  />
+                )
               ) : (
                 <div
                   className="flex items-center p-4 mb-4 text-sm rounded-lg bg-gray-800/20 text-primary"

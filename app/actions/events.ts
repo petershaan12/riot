@@ -362,6 +362,7 @@ const getParticipant = async (eventId: string) => {
   }
 };
 
+
 export {
   createEvent,
   editEvent,

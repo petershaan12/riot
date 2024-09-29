@@ -10,6 +10,21 @@
   }
 }
 
+.hexagon.hexagon-2::before {
+  border-right-color: #f1f1f1;
+}
+
+.hexagon::before {
+  content: " ";
+  width: 0;
+  height: 0;
+  border-right: 8px solid black;
+  border-top: 13px solid transparent;
+  border-bottom: 13px solid transparent;
+  position: absolute;
+  left: -2px;
+  z-index: 0;
+}
 
 .font-monument-bold {
   font-family: 'Monument-Bold', sans-serif;

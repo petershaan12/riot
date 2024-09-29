@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { getUserByUsername } from "@/app/actions/auth";
 import { getUserAttendEvent, getUserRank } from "@/app/actions/user";
 import React from "react";
+import Peringkat from "@/components/rank/peringkat";
 
 type SearchParamsProps = {
   params: { username: string };
@@ -28,10 +29,8 @@ const Page = async ({ params: { username } }: SearchParamsProps) => {
   const getDate = user?.createdAt;
   const dateObject = new Date(getDate);
   const options: Intl.DateTimeFormatOptions = {
-    weekday: "long",
     year: "numeric",
     month: "short",
-    day: "numeric",
   };
   const formattedDate = dateObject.toLocaleDateString("en-us", options);
 
@@ -62,11 +61,13 @@ const Page = async ({ params: { username } }: SearchParamsProps) => {
               <h1 className="text-3xl uppercase font-bold">{user?.name}</h1>
             )}
             <p className="opacity-50">@{user?.username ?? "-"}</p>
-            <p className="flex items-center opacity-50 ">
-              <Calendar className="w-5 mr-2 " strokeWidth={2.5} />
-              Joined on {formattedDate}
-            </p>
-
+            <div className="flex items-center gap-x-2 py-2">
+              <Peringkat rank={user?.points} />
+              <p className="flex items-center opacity-50 ">
+                <Calendar className="w-5 mr-2 " strokeWidth={2.5} />
+                Joined on {formattedDate}
+              </p>
+            </div>
             {user?.bio && <p className="my-2">{user.bio}</p>}
 
             {user?.role === "USER" && (
