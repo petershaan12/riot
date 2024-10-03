@@ -8,13 +8,13 @@ import Logout from "../auth/logout";
 
 interface MobileNavProps {
   isLogin: boolean;
-  isOrganization: boolean;
+  isChapter: boolean;
   isAdmin: boolean;
 }
 
 const MobileNav: React.FC<MobileNavProps> = ({
   isLogin,
-  isOrganization,
+  isChapter,
   isAdmin,
 }) => {
   return (
@@ -31,11 +31,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
             alt="riot Logo"
           />
 
-          <NavItems
-            isLogin={isLogin}
-            isOrganization={isOrganization}
-            isAdmin={isAdmin}
-          />
+          <NavItems isLogin={isLogin} isChapter={isChapter} isAdmin={isAdmin} />
           {!isLogin ? (
             <Button
               asChild

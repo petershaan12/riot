@@ -18,7 +18,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Separator } from "@/components/ui/separator";
-import { createNewOrganisasi } from "@/app/actions/organisasi";
+import { createNewOrganisasi } from "@/app/actions/Chapter";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -51,7 +51,7 @@ export const OrganisasiForm = () => {
           if (data.success) {
             setSuccess(data.success);
             toast.success(data.success, { id: toastId });
-            router.push("/organisasi");
+            router.push("/Chapter");
           }
         })
         .catch((error) => {

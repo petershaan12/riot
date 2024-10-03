@@ -21,7 +21,7 @@ import SearchRiot from "./SearchRiot";
 const Header = async () => {
   const session = await auth();
   const currentTime = getCurrentTime();
-  const isOrganization = (role: UserRole): boolean => role === UserRole.ORGANIZATION;
+  const isChapter = (role: UserRole): boolean => role === UserRole.CHAPTER;
   const isAdmin = (role: UserRole): boolean => role === UserRole.ADMIN;
 
   return (
@@ -41,7 +41,7 @@ const Header = async () => {
             <NavItems
               isLogin={!!session}
               isAdmin={isAdmin(session?.user?.role)}
-              isOrganization={isOrganization(session?.user?.role)}
+              isChapter={isChapter(session?.user?.role)}
             />
           </nav>
         </div>
@@ -90,7 +90,7 @@ const Header = async () => {
           <MobileNav
             isLogin={!!session}
             isAdmin={isAdmin(session?.user?.role)}
-            isOrganization={isOrganization(session?.user?.role)}
+            isChapter={isChapter(session?.user?.role)}
           />
         </div>
       </div>

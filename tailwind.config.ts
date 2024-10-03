@@ -19,7 +19,7 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#CBFF37",
+          DEFAULT: "#376FFF",
         },
         black: "#000000",
         white: "#FFFFFF",
@@ -51,7 +51,7 @@ module.exports = {
         "dotted-pattern": "url('/assets/images/dotted-pattern.png')",
         "hero-img": "url('/assets/images/hero.png')",
         "custom-gradient":
-          "linear-gradient(rgba(51, 82, 26, 0.4) 0%, rgba(37, 55, 14, 0.2) 52.58%, rgba(19, 21, 23  , 0) 100%)",
+          "linear-gradient(rgba(55, 111, 255, 0.4) 0%, rgba(51, 84, 167, 0.2) 52.58%, rgba(19, 21, 23  , 0) 100%)",
       },
       keyframes: {
         "accordion-down": {

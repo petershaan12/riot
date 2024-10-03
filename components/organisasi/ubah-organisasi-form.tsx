@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import React from "react";
-import { ubahOrganisasi } from "@/app/actions/organisasi";
+import { ubahOrganisasi } from "@/app/actions/Chapter";
 
 export const UbahOrganisasiForm = ({
   user,

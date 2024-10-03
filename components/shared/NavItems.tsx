@@ -7,23 +7,19 @@ import React from "react";
 
 interface NavItemsProps {
   isLogin: boolean;
-  isOrganization: boolean;
+  isChapter: boolean;
   isAdmin: boolean;
 }
 
-const NavItems: React.FC<NavItemsProps> = ({
-  isLogin,
-  isAdmin,
-  isOrganization,
-}) => {
+const NavItems: React.FC<NavItemsProps> = ({ isLogin, isAdmin, isChapter }) => {
   const pathname = usePathname();
 
   const filteredNavItems = headerLinks.filter((item) => {
     if (item.protected) {
-      if (item.label === "Create Event" && !(isOrganization || isAdmin)) {
+      if (item.label === "Create Event" && !(isChapter || isAdmin)) {
         return false;
       }
-      if (item.label === "Organisasi" && !isAdmin) {
+      if (item.label === "Chapter" && !isAdmin) {
         return false;
       }
       if (item.label === "User" && !isAdmin) {
@@ -42,7 +38,7 @@ const NavItems: React.FC<NavItemsProps> = ({
           <li
             key={link.route}
             className={`${
-              isActive ? "text-primary opacity-100" : "opacity-50"
+              isActive ? "text-white opacity-100" : "opacity-50"
             } flex-center p-medium-4 whitespace-nowrap hover:text-primary  hover:opacity-100`}
           >
             <Link href={link.route} className="text-sm ">

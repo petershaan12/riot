@@ -125,7 +125,7 @@ export const RegisterForm = () => {
         <Button
           type="submit"
           disabled={isPending}
-          className="w-full text-black font-monument-regular uppercase text-xl"
+          className="w-full text-white font-monument-regular uppercase text-xl"
         >
           Register
         </Button>

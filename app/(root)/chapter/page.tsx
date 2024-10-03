@@ -12,7 +12,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import DeleteButton from "@/components/admin/delete-button";
 import React from "react";
-import { getAllOrganisasi } from "@/app/actions/organisasi";
+import { getAllOrganisasi } from "@/app/actions/chapter";
 
 const Page = async () => {
   const user = await currentUser();
@@ -33,18 +33,18 @@ const Page = async () => {
         <div className="flex flex-col items-center justify-center text-center gap-5">
           <div>
             <h1 className="text-2xl md:text-5xl uppercase font-bold">
-              Organisasi
+              Chapter
             </h1>
-            <p className="opacity-50">List Organisasi </p>
+            <p className="opacity-50">List Chapter </p>
           </div>
         </div>
       </section>
       <section className="flex justify-center mb-5 space-x-3 items-center">
         <Link
-          href={`/organisasi/create`}
+          href={`/Chapter/create`}
           className="flex bg-white text-black px-2 w-fit py-1 rounded-md hover:bg-white/60 hover:text-white"
         >
-          Create Organisasi
+          Create Chapter
         </Link>
       </section>
 
@@ -79,7 +79,7 @@ const Page = async () => {
                       View
                     </button>
                   </Link>
-                  <Link href={`/organisasi/${user.username}/edit`}>
+                  <Link href={`/Chapter/${user.username}/edit`}>
                     <button className="text-primary hover:text-white">
                       Edit
                     </button>

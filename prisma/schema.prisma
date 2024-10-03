@@ -10,7 +10,8 @@ datasource db {
 enum UserRole {
   ADMIN
   USER
-  ORGANIZATION
+  CHAPTER
+  SPARTAN
 }
 
 enum AttendanceStatus {

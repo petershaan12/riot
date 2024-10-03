@@ -1,5 +1,5 @@
 import { getUserByUsernameAdmin } from "@/app/actions/auth";
-import { UbahOrganisasiForm } from "@/components/organisasi/ubah-organisasi-form";
+import { UbahOrganisasiForm } from "@/components/Chapter/ubah-Chapter-form";
 import { redirect } from "next/navigation";
 
 type UpdateEventProps = {

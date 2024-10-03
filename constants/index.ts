@@ -25,8 +25,8 @@ export const headerLinks = [
     protected: true,
   },
   {
-    label: "Organisasi",
-    route: "/organisasi",
+    label: "Chapter",
+    route: "/Chapter",
     protected: true,
   },
 ];

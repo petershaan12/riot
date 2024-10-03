@@ -101,7 +101,7 @@ const ubahOrganisasi = async (
     },
   });
 
-  return { success: "Organisasi Profile Updated" };
+  return { success: "Chapter Profile Updated" };
 };
 
 export { getAllOrganisasi, createNewOrganisasi, ubahOrganisasi };
