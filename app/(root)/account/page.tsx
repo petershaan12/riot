@@ -14,7 +14,7 @@ import { getAllUser } from "@/app/actions/user";
 import DeleteButton from "@/components/admin/delete-button";
 import React from "react";
 
-export const UserRole: { [key: number]: string } = {
+const UserRole: { [key: number]: string } = {
   0: "ADMIN",
   1: "OFFICER RIOT INDONESIA",
   2: "OFFICER CHAPTER",
