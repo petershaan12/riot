@@ -7,13 +7,6 @@ datasource db {
   url      = env("MONGODB_URI")
 }
 
-enum UserRole {
-  ADMIN
-  USER
-  CHAPTER
-  SPARTAN
-}
-
 enum AttendanceStatus {
   GOING
   ATTENDED
@@ -28,7 +21,7 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  role          UserRole?   @default(USER)
+  role          String      @default("4")
   bio           String?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -102,6 +95,7 @@ model Event {
   price       String?
   buildingName String
   location    String
+  chapter     String
   isFree      Boolean
   date        DateTime
   userId      String      @db.ObjectId
@@ -146,4 +140,16 @@ model Ticket {
   user  User  @relation(fields: [userId], references: [id],  onDelete: Cascade)
   attendance Attendance[]
   @@unique([eventId, userId])
+}
+
+model Rank {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  elite     Int
+  ultra     Int
+  marathon  Int
+  half      Int
+  runner    Int
+  jogger    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

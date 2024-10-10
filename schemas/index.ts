@@ -1,3 +1,4 @@
+import { UserRole } from "@/lib/role";
 import { start } from "repl";
 import * as z from "zod";
 
@@ -13,7 +14,7 @@ export const SettingSchema = z.object({
     .optional(),
   password: z.string().min(6).optional(),
   newPassword: z.string().min(6).optional(),
-  role: z.enum(["USER", "ORGANIZATION", "ADMIN"]).optional(),
+  role: z.string().optional(),
   points: z.number().optional(),
 });
 
@@ -63,6 +64,7 @@ export const eventsFormSchema = z.object({
     .string()
     .min(3, "Location must be at least 3 characters long")
     .max(400, "Location must be at most 400 characters long"),
+  chapter: z.string(),
   imageUrl: z.string(),
   dateTime: z.date(),
   categoryId: z.string(),
@@ -88,5 +90,5 @@ export const organisasiEditFormSchema = z.object({
   image: z.string().url().optional(),
   email: z.string().email().optional(),
   password: z.string().min(6).optional(),
-  role: z.enum(["USER", "ORGANIZATION", "ADMIN"]).optional(),
+  role: z.string().optional(),
 });

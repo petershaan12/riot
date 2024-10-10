@@ -10,9 +10,6 @@ const getAllUser = async () => {
       orderBy: {
         createdAt: "asc",
       },
-      where: {
-        role: "USER",
-      },
     });
     return users;
   } catch (error) {
@@ -32,7 +29,7 @@ const getAllParticipant = async () => {
       },
       where: {
         role: {
-          notIn: ["ORGANIZATION", "ADMIN"],
+          notIn: ["2", "1", "0"],
         },
       },
       orderBy: {

@@ -60,6 +60,7 @@ type Event = {
   url: string;
   title: string;
   image: string;
+  chapter: string;
   location: string;
   category: Category;
 };
@@ -88,7 +89,7 @@ export const EventForm = ({
           ...event,
           imageUrl: event.image,
           dateTime: event.date,
-        }  
+        }
       : eventDefaultValues;
   const router = useRouter();
 
@@ -221,6 +222,24 @@ export const EventForm = ({
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="chapter"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Chapter</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      placeholder="Example: Bandung"
+                      className=" text-white rounded-md placeholder-white/10"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="buildingName"

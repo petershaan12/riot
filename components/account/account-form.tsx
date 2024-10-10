@@ -18,11 +18,11 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Separator } from "@/components/ui/separator";
-import { createNewOrganisasi } from "@/app/actions/Chapter";
+import { createNewAccount } from "@/app/actions/account";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-export const OrganisasiForm = () => {
+export const AccountForm = () => {
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const [isPending, startTransition] = useTransition();
@@ -41,7 +41,7 @@ export const OrganisasiForm = () => {
     setSuccess("");
     const toastId = toast.loading("Creating Organization");
     startTransition(() => {
-      createNewOrganisasi(values)
+      createNewAccount(values)
         .then((data) => {
           if (data.error) {
             setError(data.error);

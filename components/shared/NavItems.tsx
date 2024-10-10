@@ -7,22 +7,22 @@ import React from "react";
 
 interface NavItemsProps {
   isLogin: boolean;
-  isChapter: boolean;
+  isOfficer: boolean;
   isAdmin: boolean;
 }
 
-const NavItems: React.FC<NavItemsProps> = ({ isLogin, isAdmin, isChapter }) => {
+const NavItems: React.FC<NavItemsProps> = ({ isLogin, isAdmin, isOfficer }) => {
   const pathname = usePathname();
 
   const filteredNavItems = headerLinks.filter((item) => {
     if (item.protected) {
-      if (item.label === "Create Event" && !(isChapter || isAdmin)) {
+      if (item.label === "Create Event" && !(isOfficer || isAdmin)) {
         return false;
       }
-      if (item.label === "Chapter" && !isAdmin) {
+      if (item.label === "Account" && !isAdmin) {
         return false;
       }
-      if (item.label === "User" && !isAdmin) {
+      if (item.label === "Rank Point" && !isAdmin) {
         return false;
       }
       return isLogin;

@@ -64,7 +64,7 @@ const ubahProfile = async (
     }
   }
 
-  // Remove email from values to exclude it from the update
+  // Remove email from values to exclude    it from the update
   const { email, ...updateValues } = values;
 
   await db.user.update({

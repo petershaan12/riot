@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { currentUser, formatDateTime } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import EventDialog from "@/components/events/event-dialog";
 import MapDisplay from "@/components/GoogleMaps";
 import EventImage from "@/components/EventImage";
@@ -24,7 +24,7 @@ const Page = async ({ params: { slug } }: SearchParamsProps) => {
   const event = await getUrlEvent(slug);
 
   if (!event) {
-    redirect("/404");
+    notFound();
   }
 
   const user = await currentUser();

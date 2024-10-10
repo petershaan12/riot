@@ -20,13 +20,13 @@ export const headerLinks = [
     protected: true,
   },
   {
-    label: "User",
-    route: "/user",
+    label: "Account",
+    route: "/account",
     protected: true,
   },
   {
-    label: "Chapter",
-    route: "/Chapter",
+    label: "Rank Point",
+    route: "/rank-point",
     protected: true,
   },
 ];
@@ -52,7 +52,7 @@ export const profilDefaultValues = {
   bio: undefined,
   password: undefined,
   newPassword: undefined,
-  role: "",
+  role: undefined,
   points: undefined,
 };
 

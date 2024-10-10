@@ -128,7 +128,7 @@ export const UbahProfileForm = ({
 
     startTransition(() => {
       const ubahProfileFunction = isAdmin ? ubahProfileAdmin : ubahProfile;
-
+      
       ubahProfileFunction(cleanedValues, user.id)
         .then((data) => {
           if (data.error) {
@@ -263,14 +263,8 @@ export const UbahProfileForm = ({
                           <Select
                             value={field.value}
                             onValueChange={(value) => {
-                              form.setValue(
-                                "role",
-                                value as
-                                  | "ADMIN"
-                                  | "USER"
-                                  | "ORGANIZATION"
-                                  | undefined
-                              );
+                              const roleValue = parseInt(value);
+                              form.setValue("role", roleValue.toString());
                               field.onChange(value);
                             }}
                             disabled={isPending}
@@ -279,11 +273,13 @@ export const UbahProfileForm = ({
                               <SelectValue placeholder="Role" />
                             </SelectTrigger>
                             <SelectContent className="bg-black">
-                              <SelectItem value="ADMIN">Admin</SelectItem>
-                              <SelectItem value="ORGANIZATION">
-                                Organization
+                              <SelectItem value="0">Admin</SelectItem>
+                              <SelectItem value="1">
+                                Officer Riot Indonesia
                               </SelectItem>
-                              <SelectItem value="USER">User</SelectItem>
+                              <SelectItem value="2">Officer Chapter</SelectItem>
+                              <SelectItem value="3">Spartan</SelectItem>
+                              <SelectItem value="4">User</SelectItem>
                             </SelectContent>
                           </Select>
                         </FormControl>

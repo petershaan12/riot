@@ -2,7 +2,6 @@
 import * as z from "zod";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { CardWrapper } from "./card-wrapper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -20,9 +19,11 @@ import { FormSuccess } from "../form-success";
 import { register } from "@/app/actions/auth";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 export const RegisterForm = () => {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -106,14 +107,26 @@ export const RegisterForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Passwword</FormLabel>
+                <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    disabled={isPending}
-                    placeholder="*******"
-                    type="password"
-                  />
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      placeholder="*******"
+                      type={showPassword ? "text" : "password"}
+                    />
+                    <div
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeIcon className="w-4 h-4" />
+                      ) : (
+                        <EyeOffIcon className="w-4 h-4" />
+                      )}
+                    </div>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

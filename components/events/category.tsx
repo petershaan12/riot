@@ -34,7 +34,7 @@ const Category = () => {
     fetchCategories();
   }, [fetchCategories]);
 
-  const onSelectCategory = (category: string | null) => {
+const onSelectCategory = (category: string | null) => {
     setSelectedCategory(category);
     let newUrl = "";
     if (category && category !== "All") {

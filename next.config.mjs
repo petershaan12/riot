@@ -8,6 +8,15 @@ const nextConfig = {
           bodySizeLimit: '2mb',
         },
       },
+      async rewrites() {
+        return [
+          {
+            source: '/@:username',
+            destination: '/:username',
+          },
+        ];
+      },
+      
 };
 
 export default nextConfig;

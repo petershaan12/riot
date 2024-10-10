@@ -5,7 +5,7 @@ import { currentUser } from "@/lib/utils";
 import { getUserEvents } from "@/app/actions/events";
 import ProfileEventCard from "@/components/profile/profile-event-card";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getUserByUsername } from "@/app/actions/auth";
 import { getUserAttendEvent, getUserRank } from "@/app/actions/user";
 import React from "react";
@@ -19,7 +19,7 @@ const Page = async ({ params: { username } }: SearchParamsProps) => {
   const user = await getUserByUsername(username);
 
   if (!user) {
-    redirect("/404");
+    notFound();
   }
   const events = await getUserEvents(user?.id);
 
@@ -47,7 +47,7 @@ const Page = async ({ params: { username } }: SearchParamsProps) => {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col my-5 items-start">
-            {user?.role === "ADMIN" || user?.role === "ORGANIZATION" ? (
+            {user?.role === "0" || user?.role === "1" ? (
               <div className="flex space-x-3">
                 <h1 className="text-3xl uppercase font-bold">{user?.name}</h1>
                 <Image
@@ -70,7 +70,7 @@ const Page = async ({ params: { username } }: SearchParamsProps) => {
             </div>
             {user?.bio && <p className="my-2">{user.bio}</p>}
 
-            {user?.role === "USER" && (
+            {user?.role === "4" && (
               <div className="flex mt-2 space-x-5">
                 <div className="flex">
                   <Image
@@ -114,7 +114,7 @@ const Page = async ({ params: { username } }: SearchParamsProps) => {
       <section className="md:w-[700px]">
         <div>
           <Separator className="my-5" />
-          {(user?.role === "ADMIN" || user?.role === "ORGANIZATION") && (
+          {(user?.role === "1" || user?.role === "0") && (
             <>
               <div className="p-5">
                 <h2 className="uppercase font-bold text-3xl mb-5">Events</h2>

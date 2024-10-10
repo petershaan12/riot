@@ -8,6 +8,8 @@ const Page = async () => {
     return <div>No users found</div>; // Handle the case when no users are returned
   }
 
+  
+
   return (
     <>
       <section className="bg-contain p-5 md:py-10">

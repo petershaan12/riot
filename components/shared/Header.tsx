@@ -15,14 +15,14 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { BellIcon, SearchIcon, Settings } from "lucide-react";
-import { UserRole } from "@prisma/client";
 import SearchRiot from "./SearchRiot";
 
 const Header = async () => {
   const session = await auth();
   const currentTime = getCurrentTime();
-  const isChapter = (role: UserRole): boolean => role === UserRole.CHAPTER;
-  const isAdmin = (role: UserRole): boolean => role === UserRole.ADMIN;
+
+  const isOfficer = (role: string): boolean => role === "2"; // GUEST
+  const isAdmin = (role: string): boolean => role === "0"; // ADMIN
 
   return (
     <header className="w-full wrapper z-10 ">
@@ -41,7 +41,7 @@ const Header = async () => {
             <NavItems
               isLogin={!!session}
               isAdmin={isAdmin(session?.user?.role)}
-              isChapter={isChapter(session?.user?.role)}
+              isOfficer={isOfficer(session?.user?.role)}
             />
           </nav>
         </div>
@@ -90,7 +90,7 @@ const Header = async () => {
           <MobileNav
             isLogin={!!session}
             isAdmin={isAdmin(session?.user?.role)}
-            isChapter={isChapter(session?.user?.role)}
+            isOfficer={isOfficer(session?.user?.role)}
           />
         </div>
       </div>

@@ -57,6 +57,7 @@ const createEvent = async (values: z.infer<typeof eventsFormSchema>) => {
       image: values.imageUrl,
       url: values.url,
       description: values.description,
+      chapter: values.chapter,
       buildingName: values.buildingName,
       price: values.price,
       location: values.location,

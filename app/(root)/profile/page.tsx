@@ -49,7 +49,7 @@ const Page = async () => {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col my-5 items-start">
-            {user?.role === "ADMIN" || user?.role === "ORGANIZATION" ? (
+            {user?.role === "1" || user?.role === "0" ? (
               <div className="flex space-x-3">
                 <h1 className="text-3xl uppercase font-bold">{user?.name}</h1>
               </div>
@@ -65,7 +65,7 @@ const Page = async () => {
               </p>
             </div>
             {user?.bio && <p>{user.bio}</p>}
-            {user?.role === "USER" && (
+            {user?.role === "4" && (
               <div className="flex space-x-5">
                 <div className="flex">
                   <Image
@@ -112,7 +112,7 @@ const Page = async () => {
       <section className="md:w-[700px] mb-12">
         <div>
           <Separator className="my-5" />
-          {(user?.role === "ADMIN" || user?.role === "ORGANIZATION") && (
+          {(user?.role === "1" || user?.role === "0") && (
             <>
               <div>
                 <h2 className="uppercase font-bold text-3xl mb-5">Events</h2>

@@ -35,7 +35,7 @@ const Page = async ({ params: { slug } }: ParticipantEventSlug) => {
 
   const participant = await getParticipant(event.id);
 
-  if (!user.role.includes("ORGANIZATION") && !user.role.includes("ADMIN")) {
+  if (!user.role.includes("0") && !user.role.includes("1")) {
     return "You are not authorized to access this page";
   }
 

@@ -14,7 +14,7 @@ const ubahProfileAdmin = async (
 ) => {
   const adminUser = await currentUser();
 
-  if (!adminUser || adminUser.role !== "ADMIN") {
+  if (!adminUser || adminUser.role !== "0") {
     return { error: "Unauthorized" };
   }
 
@@ -76,7 +76,7 @@ const ubahProfileAdmin = async (
 const deleteUserAdmin = async (userId: string) => {
   const adminUser = await currentUser();
 
-  if (!adminUser || adminUser.role !== "ADMIN") {
+  if (!adminUser || adminUser.role !== "0") {
     return { error: "Unauthorized" };
   }
 
