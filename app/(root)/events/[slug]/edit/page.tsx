@@ -16,7 +16,7 @@ const Page = async ({ params: { slug } }: UpdateEventProps) => {
     redirect("/auth/login");
   }
 
-  if (!user.role.includes("ORGANIZATION") && !user.role.includes("ADMIN")) {
+  if (!user.role.includes("2") && !user.role.includes("0")) {
     return "You are not authorized to access this page";
   }
 
