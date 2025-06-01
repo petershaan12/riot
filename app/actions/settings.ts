@@ -1,6 +1,6 @@
 "use server";
 import { currentUser, handleError, saltAndHashPassword } from "@/lib/utils";
-import { SettingSchema } from "@/schemas";
+import { SettingSchema, UserSettingSchema } from "@/schemas";
 import * as z from "zod";
 import { getUserById } from "./auth";
 import { db } from "@/lib/db";
@@ -9,9 +9,17 @@ import path from "path";
 import fs from "fs/promises";
 
 const ubahProfile = async (
-  values: z.infer<typeof SettingSchema>,
+  values: z.infer<typeof UserSettingSchema>,
   userId: string
 ) => {
+  // Get current logged in user
+  const currentUserData = await currentUser();
+  
+  // Ensure user is authenticated and can only edit their own profile
+  if (!currentUserData || currentUserData.id !== userId) {
+    return { error: "Unauthorized" };
+  }
+
   const dbUser = (await getUserById(userId)) as any;
 
   if (!dbUser) return { error: "Unauthorized" };
@@ -62,9 +70,8 @@ const ubahProfile = async (
     } catch (error) {
       return { error: "Failed to save image" };
     }
-  }
-
-  // Remove email from values to exclude    it from the update
+  }  // Remove email from values to exclude it from the update
+  // UserSettingSchema already ensures only safe fields are included
   const { email, ...updateValues } = values;
 
   await db.user.update({
@@ -74,7 +81,7 @@ const ubahProfile = async (
     },
   });
 
-  return { success: "Profle Updated" };
+  return { success: "Profile Updated" };
 };
 
 

@@ -1,5 +1,5 @@
 "use server";
-import { SettingSchema } from "@/schemas";
+import { AdminSettingSchema } from "@/schemas";
 import { z } from "zod";
 import { getUserById } from "./auth";
 import { db } from "@/lib/db";
@@ -9,7 +9,7 @@ import { currentUser, saltAndHashPassword } from "@/lib/utils";
 import fs from "fs/promises";
 
 const ubahProfileAdmin = async (
-  values: z.infer<typeof SettingSchema>,
+  values: z.infer<typeof AdminSettingSchema>,
   userId: string
 ) => {
   const adminUser = await currentUser();

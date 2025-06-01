@@ -16,6 +16,38 @@ export const SettingSchema = z.object({
   points: z.number().optional(),
 });
 
+// Schema khusus untuk user biasa (tanpa role dan points)
+export const UserSettingSchema = z.object({
+  name: z.string().optional(),
+  username: z.string().optional(),
+  image: z.string().url().optional(),
+  email: z.string().email().optional(),
+  bio: z
+    .string()
+    .min(3, "Title must be at least 3 characters long")
+    .max(150, "Title must be at most 150 characters long")
+    .optional(),
+  password: z.string().min(6).optional(),
+  newPassword: z.string().min(6).optional(),
+});
+
+// Schema khusus untuk admin (dengan semua field)
+export const AdminSettingSchema = z.object({
+  name: z.string().optional(),
+  username: z.string().optional(),
+  image: z.string().url().optional(),
+  email: z.string().email().optional(),
+  bio: z
+    .string()
+    .min(3, "Title must be at least 3 characters long")
+    .max(150, "Title must be at most 150 characters long")
+    .optional(),
+  password: z.string().min(6).optional(),
+  newPassword: z.string().min(6).optional(),
+  role: z.string().optional(),
+  points: z.number().optional(),
+});
+
 export const LoginSchema = z.object({
   email: z.string().email({
     message: "Email is required",

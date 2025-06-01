@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { profilDefaultValues } from "@/constants";
-import { SettingSchema } from "@/schemas";
+import { UserSettingSchema, AdminSettingSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft } from "lucide-react";
@@ -54,6 +54,7 @@ export const UbahProfileForm = ({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
   const initialValues = {
     ...profilDefaultValues,
     name: user?.name || profilDefaultValues.name,
@@ -64,8 +65,11 @@ export const UbahProfileForm = ({
     points: user?.points || profilDefaultValues.points,
   };
 
-  const form = useForm<z.infer<typeof SettingSchema>>({
-    resolver: zodResolver(SettingSchema),
+  // Use appropriate schema based on user role
+  const schema = isAdmin ? AdminSettingSchema : UserSettingSchema;
+
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: initialValues,
   });
 
@@ -76,7 +80,6 @@ export const UbahProfileForm = ({
   }, [user, form.reset]);
 
   const { watch } = form;
-
   const isFormDirty =
     watch("name") !== initialValues.name ||
     watch("username") !== initialValues.username ||
@@ -84,8 +87,8 @@ export const UbahProfileForm = ({
     watch("image") !== initialValues.image ||
     watch("password") !== initialValues.password ||
     watch("newPassword") !== initialValues.newPassword ||
-    watch("role") !== initialValues.role ||
-    watch("points") !== initialValues.points;
+    (isAdmin && (watch as any)("role") !== initialValues.role) ||
+    (isAdmin && (watch as any)("points") !== initialValues.points);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorImage("");
@@ -111,24 +114,33 @@ export const UbahProfileForm = ({
     }
   };
 
-  const onSubmit = (values: z.infer<typeof SettingSchema>) => {
+  const onSubmit = (values: z.infer<typeof schema>) => {
     setError("");
     setSuccess("");
-    const toastId = toast.loading("Updating Profile");
-
-    const cleanedValues = {
-      ...values,
-      ...(values.email ? { email: values.email } : {}),
-      ...(values.password ? { password: values.password } : {}),
-      ...(values.newPassword ? { newPassword: values.newPassword } : {}),
-      ...(values.image ? { image: values.image } : {}),
-      ...(values.role ? { role: values.role } : {}),
-      ...(values.points ? { points: values.points } : {}),
-    };
+    const toastId = toast.loading("Updating Profile"); // Only include fields that are allowed for each user type
+    const cleanedValues = isAdmin
+      ? {
+          ...values,
+          ...(values.email ? { email: values.email } : {}),
+          ...(values.password ? { password: values.password } : {}),
+          ...(values.newPassword ? { newPassword: values.newPassword } : {}),
+          ...(values.image ? { image: values.image } : {}),
+          ...((values as any).role ? { role: (values as any).role } : {}),
+          ...((values as any).points ? { points: (values as any).points } : {}),
+        }
+      : {
+          // For regular users, only allow safe fields
+          name: values.name,
+          username: values.username,
+          bio: values.bio,
+          ...(values.image ? { image: values.image } : {}),
+          ...(values.password ? { password: values.password } : {}),
+          ...(values.newPassword ? { newPassword: values.newPassword } : {}),
+        };
 
     startTransition(() => {
       const ubahProfileFunction = isAdmin ? ubahProfileAdmin : ubahProfile;
-      
+
       ubahProfileFunction(cleanedValues, user.id)
         .then((data) => {
           if (data.error) {
@@ -250,12 +262,12 @@ export const UbahProfileForm = ({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              />{" "}
               {isAdmin && (
                 <>
                   <FormField
                     control={form.control}
-                    name="role"
+                    name={"role" as any}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Role</FormLabel>
@@ -264,7 +276,10 @@ export const UbahProfileForm = ({
                             value={field.value}
                             onValueChange={(value) => {
                               const roleValue = parseInt(value);
-                              form.setValue("role", roleValue.toString());
+                              (form.setValue as any)(
+                                "role",
+                                roleValue.toString()
+                              );
                               field.onChange(value);
                             }}
                             disabled={isPending}
@@ -289,7 +304,7 @@ export const UbahProfileForm = ({
                   />
                   <FormField
                     control={form.control}
-                    name="points"
+                    name={"points" as any}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Points</FormLabel>
@@ -329,49 +344,48 @@ export const UbahProfileForm = ({
                   </FormItem>
                 )}
               />
-              {isOAuth === false ||
-                (!isAdmin && (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Old Password</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              disabled={isPending}
-                              placeholder="*******"
-                              type="password"
-                              className="bg-transparent text-white rounded-md placeholder-white/10"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="newPassword"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>New Password</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              disabled={isPending}
-                              placeholder="*******"
-                              type="password"
-                              className="bg-transparent text-white rounded-md placeholder-white/10"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </>
-                ))}
+              {isOAuth === false && !isAdmin && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Old Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={isPending}
+                            placeholder="*******"
+                            type="password"
+                            className="bg-transparent text-white rounded-md placeholder-white/10"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="newPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>New Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={isPending}
+                            placeholder="*******"
+                            type="password"
+                            className="bg-transparent text-white rounded-md placeholder-white/10"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
               {isAdmin && isOAuth === false && (
                 <FormField
                   control={form.control}
